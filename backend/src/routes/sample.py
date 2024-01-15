@@ -1,6 +1,6 @@
 import datetime
 from fastapi import APIRouter
-from ..schemas import Sample
+from src.schemas import SampleGet
 
 router = APIRouter(
     prefix="/sample",
@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 @router.get("/")
-async def read_samples() -> list[Sample]:
+async def read_samples() -> list[SampleGet]:
     return  [{
             "id": "123456789",
             "name": "Sample Name",

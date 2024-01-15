@@ -1,1 +1,2 @@
-from .sample import Sample
+from .SampleGet import SampleGet
+from .SamplePost import SamplePost
