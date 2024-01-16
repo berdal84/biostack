@@ -20,6 +20,12 @@ DB_USER=<your-db-user>
 DB_PASSWORD=<your-db-password>
 DB_HOST=localhost
 ```
+Be sure you have a database named `biostack` in postgres by doing:
+
+```
+psql
+>> CREATE DATABASE biostack;
+```
 
 * Run `python --version` and `psql --version` in the commande line  to double check.
 
