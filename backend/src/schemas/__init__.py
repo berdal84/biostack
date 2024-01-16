@@ -1,2 +1,2 @@
-from .SampleGet import SampleGet
-from .SamplePost import SamplePost
+from .Sample import Sample
+from .SampleCreateOrUpdate import SampleCreateOrUpdate

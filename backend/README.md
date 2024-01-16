@@ -13,6 +13,14 @@ From this folder, run the following command:
 pip install -r requirements.txt
 ```
 
+Create an `.env` file with the following variables:
+```
+DB_NAME=biostack
+DB_USER=<your-db-user>
+DB_PASSWORD=<your-db-password>
+DB_HOST=localhost
+```
+
 * Run `python --version` and `psql --version` in the commande line  to double check.
 
 ## Run it

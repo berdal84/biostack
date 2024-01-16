@@ -2,7 +2,7 @@ import datetime
 from pydantic import BaseModel
 
 
-class SamplePost(BaseModel):
+class SampleCreateOrUpdate(BaseModel):
     "Schema of a Sample at the API level"
 
     name: str
@@ -16,3 +16,4 @@ class SamplePost(BaseModel):
 
     path: str 
     "Path to storage location in server's file system"
+    
