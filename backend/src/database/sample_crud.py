@@ -11,6 +11,9 @@ def get_sample_by_id(db: Session, sample_id: int) -> models.Sample | None:
 def get_sample_page(db: Session, skip: int = 0, limit: int = 100) -> list[models.Sample]:
     return db.query(models.Sample).offset(skip).limit(limit).all()
 
+def get_count(db: Session) -> int:
+    return db.query(models.Sample).count()
+
 def create_sample(db: Session, sample: schemas.SampleCreate) -> models.Sample:
     db_sample = models.Sample(**sample.model_dump())
     db.add(db_sample)

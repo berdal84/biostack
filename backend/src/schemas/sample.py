@@ -1,5 +1,6 @@
 import datetime
 from pydantic import BaseModel
+from .page import Page
 from src.utilities.metaclass import Partial
 
 class SampleBase(BaseModel):

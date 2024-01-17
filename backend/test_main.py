@@ -1,6 +1,7 @@
 import datetime
 import logging
 from fastapi.testclient import TestClient
+from src.schemas.page import Page
 from src.schemas import SampleCreate, SampleUpdate, Sample
 from main import app
 
@@ -45,10 +46,8 @@ def test_create_sample():
 
 def test_read_sample_by_page():
     response = client.get("/sample/")
-    assert response.status_code == 200
-    json = response.json()
-    for each in json:
-        assert Sample.model_validate(each)
+    assert response.status_code == 200   
+    assert Page[Sample].model_validate(response.json())
 
 
 def test_read_sample_by_id():

@@ -4,4 +4,5 @@
 # s = schemas.Sample(...)
 # m = models.Sample(...)
 
-from .Sample import Sample, SampleCreate, SampleUpdate
+from .sample import Sample, SampleCreate, SampleUpdate
+from .page import Page

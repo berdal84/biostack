@@ -2,6 +2,7 @@ from genericpath import isfile
 from mimetypes import guess_type
 import os
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+from src.schemas.page import Page
 from src.utilities.format import formatSampleFileName, getSampleFilePath
 from src.database.session import get_session, Session
 from src import schemas
@@ -22,9 +23,15 @@ async def read_sample(sample_id: int, db: Session = Depends(get_session)) -> sch
     return schemas.Sample.model_validate(db_sample, from_attributes=True)
 
 @router.get("/", description="Read a list of N samples with a given offset")
-async def read_samples(skip: int = 0, limit: int = 100, db: Session = Depends(get_session)) -> list[schemas.Sample]:
+async def read_samples(skip: int = 0, limit: int = 100, db: Session = Depends(get_session)) -> Page[schemas.Sample]:
     db_samples = sample_crud.get_sample_page(db, skip, limit)
-    return list(map(lambda each: schemas.Sample.model_validate(each, from_attributes=True), db_samples))
+
+    # TODO: get the count and the list in a single request
+    count = sample_crud.get_count(db)
+    items = list( map( lambda each: schemas.Sample.model_validate(each, from_attributes=True), db_samples ))
+    
+    return Page[schemas.Sample](items=items, total_item_count=count)
+
 
 @router.post("/", description="Create a new sample")
 async def create_sample(payload: schemas.SampleCreate, db: Session = Depends(get_session)) -> schemas.Sample:

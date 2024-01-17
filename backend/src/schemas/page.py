@@ -1,0 +1,25 @@
+
+from pydantic import BaseModel
+
+
+class Page[ItemType](BaseModel):
+    """
+    Generic class to declare a Page schema for a given item ItemType
+    
+    usage example:
+        # Items in the database
+        items = ["item1", "item2", ..., "item42"]
+
+        # Let's make the page 1 (zero-based) with a 10 items limit
+        page  = Page[str]()
+        page.data.append(item((page)*limit:((page+1)*limit))
+        page.total_item_count = len(items)
+
+        return page
+    """
+
+    items: list[ItemType] = []
+    "Page items (size is limited, depends on the client's query)"
+
+    total_item_count: int = 0
+    "The total item count (not limited to data's content)"
