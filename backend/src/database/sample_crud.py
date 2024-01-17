@@ -17,6 +17,27 @@ def create_sample(db: Session, sample: schemas.SampleCreateOrUpdate) -> models.S
     db.refresh(db_sample)
     return db_sample
 
+def update_sample(db: Session, sample: schemas.SampleCreateOrUpdate) -> models.Sample:
+    db_sample = get_sample_by_id(db, sample.id)
+
+    if db_sample is None:
+        return None
+    
+    # Those fields are not optionnal right now, but I plan to change it in the future
+    if sample.name is not None:
+        db_sample.name = sample.name
+    if sample.type is not None:
+        db_sample.type = sample.type
+    if sample.date is not None:
+        db_sample.date = sample.date
+
+    # Only field really optional
+    if sample.date is not None:
+        db_sample.file_name = sample.file_name
+
+    db.commit()
+    return db_sample
+
 def delete_sample(db: Session, sample_id: int) -> bool:
     db_sample = db.get(models.Sample, sample_id)
     if not db_sample:

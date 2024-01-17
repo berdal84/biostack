@@ -1,3 +1,4 @@
+from typing import Optional
 from .SampleCreateOrUpdate import SampleCreateOrUpdate
 
 class Sample(SampleCreateOrUpdate):
@@ -5,4 +6,3 @@ class Sample(SampleCreateOrUpdate):
 
     id: int
     "Unique identifier"
-

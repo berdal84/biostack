@@ -1,3 +1,7 @@
 venv/
 __pycache__
+# Local environment
 .env
+# User uploads
+uploads/**
+!uploads/.keep

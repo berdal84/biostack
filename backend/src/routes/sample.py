@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
-from backend.src.database.session import get_db, Session
+import os
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from src.utilities.format import formatSampleFileName, getSampleFilePath
+from src.database.session import get_db, Session
 from src import schemas
 from src.database import sample_crud
         
@@ -27,13 +29,49 @@ async def create_sample(payload: schemas.SampleCreateOrUpdate, db: Session = Dep
     db_sample = sample_crud.create_sample(db, payload)
     if db_sample is None:
         raise HTTPException(404)
-    response = schemas.Sample.model_validate(db_sample, from_attributes=True)
-    print(response)
-    return response
+    return schemas.Sample.model_validate(db_sample, from_attributes=True)    
 
 @router.delete("/{sample_id}", description="Delete a sample from a existing id")
 async def delete_sample(sample_id: int, db: Session = Depends(get_db)):
+
+    # Try to get the sample
+    db_sample = sample_crud.get_sample_by_id(db, sample_id)
+    if db_sample is None:
+        raise HTTPException(404)
+    
+    # Delete the associated file
+    # (Idea: we could move the file instead, to have a backup)
+    if db_sample.file_name is not None:
+        file_path = getSampleFilePath(db_sample.file_name)
+        try:
+            os.remove(file_path)
+        except Exception: 
+            raise HTTPException( 500, f"An error occured when deleting the file {file_path}")
+
+    # Delete the entry in the database
     success = sample_crud.delete_sample(db, sample_id)
     if not success:
-        raise HTTPException(404)
+        raise HTTPException(422, "Unable to delete the sample")
+    
     return { "detail": "Sample {} deleted".format(sample_id) }
+
+@router.post("/{sample_id}/upload", description="Upload a file to an existing sample")
+async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(get_db)) -> schemas.Sample:
+    
+    # Try to get the existing sample first
+    db_sample = sample_crud.get_sample_by_id(db, sample_id)
+    if not db_sample:
+        raise HTTPException(404)
+
+    # Then, store the uploaded file
+    # TODO: create a file dedicated module?
+    if not file:
+        return HTTPException(422, "No upload file sent")
+    file_name = formatSampleFileName(sample_id, file.filename)
+    fd = open( getSampleFilePath(file_name), "wb+")
+    fd.write(file.file.read())
+
+    # And update the path
+    db_sample.file_name = file_name # I decide to store only the filename, path will be retrieved knowing the sample_id anyways.
+    db_sample = sample_crud.update_sample(db, db_sample)      
+    return schemas.Sample.model_validate(db_sample, from_attributes=True)

@@ -9,4 +9,4 @@ class Sample(Base):
     name = Column(String)
     type = Column(String)
     date = Column(Date)
-    path = Column(String)
+    file_name = Column(String, nullable=True)
