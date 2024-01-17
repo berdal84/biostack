@@ -4,8 +4,8 @@
 ## Install it
 
 Prerequisites:
-- Python 3.12*
-- PostgreSQL 14 and above*
+- Python 3.12 (*1)
+- PostgreSQL 14 and above (*1)
 
 From this folder, run the following command:
 
@@ -27,7 +27,7 @@ psql
 >> CREATE DATABASE biostack;
 ```
 
-* Run `python --version` and `psql --version` in the commande line  to double check.
+(*1) Run `python --version` and `psql --version` in the commande line  to double check.
 
 ## Run it
 
