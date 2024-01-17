@@ -1,7 +1,9 @@
+from genericpath import isfile
+from mimetypes import guess_type
 import os
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
 from src.utilities.format import formatSampleFileName, getSampleFilePath
-from src.database.session import get_db, Session
+from src.database.session import get_session, Session
 from src import schemas
 from src.database import sample_crud
         
@@ -13,26 +15,26 @@ router = APIRouter(
 
 
 @router.get("/{sample_id}", description="Read a single sample from a given id")
-async def read_sample(sample_id: int, db: Session = Depends(get_db)) -> schemas.Sample:
+async def read_sample(sample_id: int, db: Session = Depends(get_session)) -> schemas.Sample:
     db_sample = sample_crud.get_sample_by_id(db, sample_id)
     if db_sample is None:
         raise HTTPException(404)
     return schemas.Sample.model_validate(db_sample, from_attributes=True)
 
 @router.get("/", description="Read a list of N samples with a given offset")
-async def read_samples(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)) -> list[schemas.Sample]:
+async def read_samples(skip: int = 0, limit: int = 100, db: Session = Depends(get_session)) -> list[schemas.Sample]:
     db_samples = sample_crud.get_sample_page(db, skip, limit)
     return list(map(lambda each: schemas.Sample.model_validate(each, from_attributes=True), db_samples))
 
 @router.post("/", description="Create a new sample")
-async def create_sample(payload: schemas.SampleCreateOrUpdate, db: Session = Depends(get_db)) -> schemas.Sample:
+async def create_sample(payload: schemas.SampleCreateOrUpdate, db: Session = Depends(get_session)) -> schemas.Sample:
     db_sample = sample_crud.create_sample(db, payload)
     if db_sample is None:
         raise HTTPException(404)
     return schemas.Sample.model_validate(db_sample, from_attributes=True)    
 
 @router.delete("/{sample_id}", description="Delete a sample from a existing id")
-async def delete_sample(sample_id: int, db: Session = Depends(get_db)):
+async def delete_sample(sample_id: int, db: Session = Depends(get_session)):
 
     # Try to get the sample
     db_sample = sample_crud.get_sample_by_id(db, sample_id)
@@ -55,8 +57,8 @@ async def delete_sample(sample_id: int, db: Session = Depends(get_db)):
     
     return { "detail": "Sample {} deleted".format(sample_id) }
 
-@router.post("/{sample_id}/upload", description="Upload a file to an existing sample")
-async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(get_db)) -> schemas.Sample:
+@router.post("/{sample_id}/upload", description="Upload a file to associate it to an existing sample.")
+async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(get_session)) -> schemas.Sample:
     
     # Try to get the existing sample first
     db_sample = sample_crud.get_sample_by_id(db, sample_id)
@@ -71,7 +73,30 @@ async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(
     fd = open( getSampleFilePath(file_name), "wb+")
     fd.write(file.file.read())
 
+    # Overwrite?
+    # TODO: handle when user upload a new file to a sample having already a file attached
+    #       Easy solution would be to delete the old file.
+    #       Safer would be to ask user to delete explicitly.
+    #       Choice may depends if we allow multiple files per sample.
+
     # And update the path
     db_sample.file_name = file_name # I decide to store only the filename, path will be retrieved knowing the sample_id anyways.
     db_sample = sample_crud.update_sample(db, db_sample)      
     return schemas.Sample.model_validate(db_sample, from_attributes=True)
+
+@router.get("/{sample_id}/download", description="Download the file associated with a given sample")
+async def download(sample_id: int, db: Session = Depends(get_session)):
+
+    # Try to get the sample
+    db_sample = sample_crud.get_sample_by_id(db, sample_id)
+    if db_sample is None:
+        return Response(status_code=404)
+    
+    # Locate the file, read its content and return it
+    filename = getSampleFilePath(db_sample.file_name)
+    if not isfile(filename):
+        return Response(status_code=404)
+    with open(filename) as f:
+        content = f.read()
+    media_type, _ = guess_type(filename)
+    return Response(content, media_type=media_type)

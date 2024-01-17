@@ -1,8 +1,13 @@
 import datetime
+import logging
+import tempfile
 from fastapi.testclient import TestClient
 from src.schemas import SampleCreateOrUpdate, Sample
 from main import app
 
+# Create a named logger
+logger = logging.getLogger('biostack')
+logger.setLevel(logging.INFO)
 
 client = TestClient(app)
 
@@ -54,6 +59,13 @@ def test_sample_file_upload():
     assert response.status_code == 200
     new_sample = Sample.model_validate(response.json())
     assert new_sample.id is sample_id
+
+def test_sample_file_download():
+    global sample_id
+    response = client.get("/sample/{}/download".format(sample_id))
+    assert response.status_code == 200
+    original = open("./data/file-for-test.txt", "rb")
+    assert original.read() == response.content
 
 def test_update_sample():
     global sample_id
