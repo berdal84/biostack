@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from src.database import models
 from src import schemas
 
+""" CRUD for the Sample table """
 
 def get_sample_by_id(db: Session, sample_id: int) -> models.Sample | None:
     return db.query(models.Sample).filter(models.Sample.id == sample_id).first()
@@ -10,30 +11,34 @@ def get_sample_by_id(db: Session, sample_id: int) -> models.Sample | None:
 def get_sample_page(db: Session, skip: int = 0, limit: int = 100) -> list[models.Sample]:
     return db.query(models.Sample).offset(skip).limit(limit).all()
 
-def create_sample(db: Session, sample: schemas.SampleCreateOrUpdate) -> models.Sample:
+def create_sample(db: Session, sample: schemas.SampleCreate) -> models.Sample:
     db_sample = models.Sample(**sample.model_dump())
     db.add(db_sample)
     db.commit()
     db.refresh(db_sample)
     return db_sample
 
-def update_sample(db: Session, sample: schemas.SampleCreateOrUpdate) -> models.Sample:
-    db_sample = get_sample_by_id(db, sample.id)
+def update_sample(db: Session, sample_id: int, new_data: schemas.SampleUpdate = None, file_name: str | None = None) -> models.Sample:
+    """
+    update a sample with new data and an optionnal file_name
+    """
 
+    # Try to get the existing sample
+    db_sample = get_sample_by_id(db, sample_id)
     if db_sample is None:
-        return None
-    
-    # Those fields are not optionnal right now, but I plan to change it in the future
-    if sample.name is not None:
-        db_sample.name = sample.name
-    if sample.type is not None:
-        db_sample.type = sample.type
-    if sample.date is not None:
-        db_sample.date = sample.date
+        return None    
 
-    # Only field really optional
-    if sample.date is not None:
-        db_sample.file_name = sample.file_name
+    # Update the fields when necessary
+    if new_data:
+        if new_data.name is not None:
+            db_sample.name = new_data.name
+        if new_data.type is not None:
+            db_sample.type = new_data.type
+        if new_data.date is not None:
+            db_sample.date = new_data.date
+
+    if file_name:
+        db_sample.file_name = file_name # This field is not included in SampleUpdate because it has to be set by the system, never directly by a client.
 
     db.commit()
     return db_sample

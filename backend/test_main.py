@@ -1,8 +1,7 @@
 import datetime
 import logging
-import tempfile
 from fastapi.testclient import TestClient
-from src.schemas import SampleCreateOrUpdate, Sample
+from src.schemas import SampleCreate, SampleUpdate, Sample
 from main import app
 
 """
@@ -31,7 +30,7 @@ def test_read_main():
 
 
 def test_create_sample():
-    payload = SampleCreateOrUpdate(
+    payload = SampleCreate(
         name="Test",
         type="MRI",
         date=datetime.datetime.now()
@@ -91,12 +90,12 @@ def test_sample_file_download():
 
 def test_update_sample():
     global sample_id
-    payload = SampleCreateOrUpdate(
+    payload = SampleUpdate(
         name="Test",
         type="MRI",
         date=datetime.datetime.now()
     )
-    response = client.put( url="/sample/{}".format(sample_id), json=payload.model_dump_json() )
+    response = client.put( url="/sample/{}".format(sample_id), content=payload.model_dump_json() )
     assert response.status_code == 200
     new_sample = Sample.model_validate(response.json())
     assert new_sample.id is sample_id

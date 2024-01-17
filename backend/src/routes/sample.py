@@ -27,11 +27,19 @@ async def read_samples(skip: int = 0, limit: int = 100, db: Session = Depends(ge
     return list(map(lambda each: schemas.Sample.model_validate(each, from_attributes=True), db_samples))
 
 @router.post("/", description="Create a new sample")
-async def create_sample(payload: schemas.SampleCreateOrUpdate, db: Session = Depends(get_session)) -> schemas.Sample:
+async def create_sample(payload: schemas.SampleCreate, db: Session = Depends(get_session)) -> schemas.Sample:
     db_sample = sample_crud.create_sample(db, payload)
     if db_sample is None:
         raise HTTPException(404)
-    return schemas.Sample.model_validate(db_sample, from_attributes=True)    
+    return schemas.Sample.model_validate(db_sample, from_attributes=True)  
+  
+@router.put("/{sample_id}", description="Update an existing sample")
+async def update_sample(sample_id: int, payload: schemas.SampleUpdate, db: Session = Depends(get_session)) -> schemas.Sample:
+    print(payload)
+    db_sample = sample_crud.update_sample(db, sample_id, payload)
+    if db_sample is None:
+        raise HTTPException(404)
+    return schemas.Sample.model_validate(db_sample, from_attributes=True)  
 
 @router.delete("/{sample_id}", description="Delete a sample from a existing id")
 async def delete_sample(sample_id: int, db: Session = Depends(get_session)):
@@ -81,9 +89,8 @@ async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(
     fd = open( getSampleFilePath(file_name), "wb+")
     fd.write(file.file.read())
 
-    # And update the path
-    db_sample.file_name = file_name # I decide to store only the filename, path will be retrieved knowing the sample_id anyways.
-    db_sample = sample_crud.update_sample(db, db_sample)      
+    # ...And update the path    
+    db_sample = sample_crud.update_sample(db, sample_id, file_name=file_name) # store only the filename, path will be retrieved knowing the sample_id anyways.     
     return schemas.Sample.model_validate(db_sample, from_attributes=True)
 
 @router.get("/{sample_id}/download", description="Download the file associated with a given sample")
