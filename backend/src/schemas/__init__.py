@@ -1,2 +1,3 @@
 from .Sample import Sample
-from .SampleCreateOrUpdate import SampleCreateOrUpdate
+from .SampleCreate import SampleCreate
+from .SampleUpdate import SampleUpdate
