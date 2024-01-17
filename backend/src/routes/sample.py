@@ -65,6 +65,14 @@ async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(
     if not db_sample:
         raise HTTPException(404)
 
+    # Delete any existing file related to this sample
+    # TODO: handle when user upload a new file to a sample having already a file attached
+    #       Easy solution would be to delete the old file.
+    #       Safer would be to ask user to delete explicitly.
+    #       Choice may depends if we allow multiple files per sample.
+    if db_sample.file_name is not None:
+        os.remove(getSampleFilePath(db_sample.file_name))
+
     # Then, store the uploaded file
     # TODO: create a file dedicated module?
     if not file:
@@ -72,12 +80,6 @@ async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(
     file_name = formatSampleFileName(sample_id, file.filename)
     fd = open( getSampleFilePath(file_name), "wb+")
     fd.write(file.file.read())
-
-    # Overwrite?
-    # TODO: handle when user upload a new file to a sample having already a file attached
-    #       Easy solution would be to delete the old file.
-    #       Safer would be to ask user to delete explicitly.
-    #       Choice may depends if we allow multiple files per sample.
 
     # And update the path
     db_sample.file_name = file_name # I decide to store only the filename, path will be retrieved knowing the sample_id anyways.

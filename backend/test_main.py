@@ -5,6 +5,16 @@ from fastapi.testclient import TestClient
 from src.schemas import SampleCreateOrUpdate, Sample
 from main import app
 
+"""
+Single test file to run agains the sample API.
+
+In order to gain time, the tests are written not independently.
+They will run in the order they are written.
+The goal is to keep the DB clean by deleting the test samples.
+Of course, it is not ideal, since when a early test fail, it may provoke the next one to fail too.
+"""
+
+
 # Create a named logger
 logger = logging.getLogger('biostack')
 logger.setLevel(logging.INFO)
@@ -52,13 +62,25 @@ def test_read_sample_by_id():
 
 def test_sample_file_upload():
     global sample_id
+    test_file = open("./data/file-for-test.txt", "rb")
+    # First upload
     response = client.post(
         url="/sample/{}/upload".format(sample_id),
-        files={"file": ("file-for-test.txt", open("./data/file-for-test.txt", "rb"), "text/plain")} 
+        files={"file": ("test-file.txt", test_file, "text/plain")} 
         )
     assert response.status_code == 200
     new_sample = Sample.model_validate(response.json())
     assert new_sample.id is sample_id
+    assert new_sample.file_name.endswith("test-file.txt")
+
+    # Second upload
+    response = client.post(
+        url="/sample/{}/upload".format(sample_id),
+        files={"file": ("test-file-override.txt", test_file, "text/plain")} 
+        )
+    assert response.status_code == 200
+    new_sample = Sample.model_validate(response.json())
+    assert new_sample.file_name.endswith("test-file-override.txt")
 
 def test_sample_file_download():
     global sample_id
