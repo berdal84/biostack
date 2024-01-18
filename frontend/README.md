@@ -1,4 +1,6 @@
 
+[![Frontend CI](https://github.com/berdal84/biostack/actions/workflows/node.js.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/node.js.yml)
+
 # BioStack's Frontend
 
 Frontend to dialog with BioStack's API.
