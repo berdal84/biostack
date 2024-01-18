@@ -1,6 +1,6 @@
 # Biostack, a FastAPI / Nextjs exercise
 
-This project consists on a front and backend to manage Biology samples.
+This project consists on a front and backend to manage Biotech Data.
 
 The front and back end are present in [`./frontend`](./frontend) and [`./backend`](./backend) folders respectively.
 
