@@ -13,7 +13,7 @@ We rely on the following technologies:
 
 More information in the dedicated [readme](./backend/README.md).
 
-## [Frontend](./front)
+## [Frontend](./frontend)
 
 And for the frontend:
 - Typescript
