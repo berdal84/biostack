@@ -8,8 +8,8 @@ from src import schemas
 def get_sample_by_id(db: Session, sample_id: int) -> models.Sample | None:
     return db.query(models.Sample).filter(models.Sample.id == sample_id).first()
 
-def get_sample_page(db: Session, skip: int = 0, limit: int = 100) -> list[models.Sample]:
-    return db.query(models.Sample).offset(skip).limit(limit).all()
+def get_sample_page(db: Session, index: int = 0, limit: int = 100) -> list[models.Sample]:
+    return db.query(models.Sample).offset(index * limit).limit(limit).all()
 
 def get_count(db: Session) -> int:
     return db.query(models.Sample).count()

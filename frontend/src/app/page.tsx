@@ -2,24 +2,29 @@
 import { Box } from "@mui/material"
 import Button from "@/app/components/Button"
 import Table from "@/app/components/Table"
-import { useAppContext, useAppDispatchContext } from "@/app/contexts/AppContext";
+import { useAppContext } from "@/app/contexts/AppContext";
 import { useEffect } from "react";
+import { useAPI } from "@/app/utilities/useApi";
 
 export default function Home() {
-  const { page: currentPage, pageIndex, pageLimit } = useAppContext()
-  const dispatch = useAppDispatchContext()
+  const { page, status, statusMessage } = useAppContext()
+  const { fetchPage } = useAPI()
 
   useEffect(() => {
     // Trigger a fetch once
-    dispatch({ type: "fetch", payload: {} })
+    fetchPage()
   }, [])
 
   const handleSetPage = (newPage: number) => {
-    dispatch({ type: "fetch", payload: { page: newPage } })
+    fetchPage(newPage);
   }
 
   const handleSetRowsPerPage = (newLimit: number) => {
-    dispatch({ type: "fetch", payload: { limit: newLimit } })
+    fetchPage(page.index, newLimit)
+  }
+
+  const handleRefresh = () => {
+    fetchPage()
   }
 
   return (
@@ -28,15 +33,17 @@ export default function Home() {
         <p>Welcome to BioStack, a FastAPI/NextJS exercise</p>
         <p>Find below the most recent Samples.</p>
       </Box>
+      <Button disabled={status === "loading"} onClick={handleRefresh}>Refresh</Button>
       <Table
-        rows={currentPage.items}
-        page={pageIndex}
+        rows={page.items}
+        page={page.index}
         setPage={handleSetPage}
-        rowsPerPage={pageLimit}
+        rowsPerPage={page.limit}
         setRowsPerPage={handleSetRowsPerPage}
-        count={currentPage.total_item_count}
+        count={page.total_item_count}
       />
-      <Button>Click me</Button>
+      <p hidden={status !== "loading"} className="text-grey-500">Loading...</p>
+      <p hidden={status !== "error"} className="text-red-500" title={statusMessage} >Error: see console</p>
     </Box>
   )
 }

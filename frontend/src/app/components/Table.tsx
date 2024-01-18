@@ -61,7 +61,7 @@ export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage
                 <tr>
                     <TablePagination
                         className="pt-3"
-                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                        rowsPerPageOptions={[5, 10, 25, 50, 100]}
                         colSpan={3}
                         count={count}
                         rowsPerPage={rowsPerPage}

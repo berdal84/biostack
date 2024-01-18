@@ -18,8 +18,14 @@ class Page[ItemType](BaseModel):
         return page
     """
 
-    items: list[ItemType] = []
+    items: list[ItemType]
     "Page items (size is limited, depends on the client's query)"
 
-    total_item_count: int = 0
+    total_item_count: int
     "The total item count (not limited to data's content)"
+
+    limit: int
+    "The item max count for a page (client needs it when using defaults)"
+
+    index: int
+    "Page index (zero-based)"

@@ -1,21 +1,22 @@
 "use client"
 import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
 import { Sample, Page } from '@/app/types';
-import { MOCK_SAMPLES } from '@/app/mocks/samples';
+
+type Status = "loading" | "error" | "pending";
 
 /** The various action types to dispatch */
-type Action = { type: 'fetch', payload: Partial<{ page: number, limit: number }> }
+type Action =
+    { type: 'setStatus', payload: { status: Status, message?: string } } |
+    { type: 'setPage', payload: { page: Page<Sample> } } |
+    { type: string, payload: never }
+
 
 /** State of the AppContext */
 type AppState = {
-    /** True when a new page is being fetched */
-    isLoading: boolean;
-    /** Page returned by the last fetch */
+    status: Status;
+    statusMessage?: string;
+    /** Cached page (last fetch result) */
     page: Page<Sample>;
-    /** Current page index (zero-based) */
-    pageIndex: number;
-    /** Current page limit */
-    pageLimit: number;
 }
 
 const AppContext = createContext<AppState | null>(null);
@@ -45,26 +46,24 @@ export function useAppDispatchContext(): Dispatch<Action> | never {
 
 function appReducer(state: AppState, action: Action): AppState {
     switch (action.type) {
-        case 'fetch': {
+        case 'setPage': {
 
-            // Compute new page index, offset and limit
-            const newPageIndex = action.payload.page ?? state.pageIndex;
-            const newPageLimit = action.payload.limit ?? state.pageLimit
-            const offset = newPageIndex * newPageLimit;
+            // TODO:
+            // Instead of overriding fully state.page, we cache multiple pages.
+            // That would be usefull to limit requests.
+            // Should also provide a "refresh" action.
 
-            // Fetch
-            // TODO: use API, not from here though
-            const newPage = {
-                items: MOCK_SAMPLES.slice(offset, offset + newPageLimit),
-                total_item_count: MOCK_SAMPLES.length
-            }
-
-            // Update state
             return {
                 ...state,
-                pageIndex: newPageIndex,
-                pageLimit: newPageLimit,
-                page: newPage,
+                status: "pending", // We consider one request at a time for now
+                page: action.payload.page,
+            }
+        }
+        case 'setStatus': {
+            return {
+                ...state,
+                statusMessage: action.payload.message,
+                status: action.payload.status
             }
         }
         default: {
@@ -79,13 +78,13 @@ function appReducer(state: AppState, action: Action): AppState {
 export function AppContextProvider({ children }: PropsWithChildren) {
 
     const [state, dispatch] = useReducer(appReducer, {
-        isLoading: false,
+        status: "pending",
         page: {
             items: [],
-            total_item_count: 0
-        },
-        pageIndex: 0,
-        pageLimit: 5,
+            total_item_count: 0,
+            index: 0,
+            limit: 5
+        }
     } as AppState);
 
     return (

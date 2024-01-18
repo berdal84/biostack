@@ -23,14 +23,19 @@ async def read_sample(sample_id: int, db: Session = Depends(get_session)) -> sch
     return schemas.Sample.model_validate(db_sample, from_attributes=True)
 
 @router.get("/", description="Read a list of N samples with a given offset")
-async def read_samples(skip: int = 0, limit: int = 100, db: Session = Depends(get_session)) -> Page[schemas.Sample]:
-    db_samples = sample_crud.get_sample_page(db, skip, limit)
+async def read_samples(index: int = 0, limit: int = 100, db: Session = Depends(get_session)) -> Page[schemas.Sample]:
+    db_samples = sample_crud.get_sample_page(db, index, limit)
 
     # TODO: get the count and the list in a single request
     count = sample_crud.get_count(db)
     items = list( map( lambda each: schemas.Sample.model_validate(each, from_attributes=True), db_samples ))
     
-    return Page[schemas.Sample](items=items, total_item_count=count)
+    return Page[schemas.Sample](
+        items=items,
+        total_item_count=count,
+        limit=limit,
+        index=index
+        )
 
 
 @router.post("/", description="Create a new sample")
