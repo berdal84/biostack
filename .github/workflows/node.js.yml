@@ -1,5 +1,5 @@
 name: Frontend CI
-
+ 
 on:
   push:
     branches: [ "main" ]
@@ -10,7 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: 'frontend' # where package-lock.json is
+        
     strategy:
       matrix:
         node-version: [18.x] # Just targetting this version for now
@@ -23,6 +26,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-      working-directory: ./frontend
     - run: npm run build
-      working-directory: ./frontend
