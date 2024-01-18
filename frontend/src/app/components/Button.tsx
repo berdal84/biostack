@@ -14,7 +14,7 @@ const Button = React.forwardRef(function Button(
     return <BaseButton
         {...props}
         ref={ref}
-        className="bg-amber-500 hover:bg-amber-500/75 text-white p-2 rounded-sm"
+        className="bg-amber-500 hover:bg-amber-500/75 text-white px-2 py-1 rounded-sm"
     />;
 })
 

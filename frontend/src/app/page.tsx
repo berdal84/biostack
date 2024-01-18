@@ -27,13 +27,20 @@ export default function Home() {
     fetchPage()
   }
 
+  const handleCreateSample = () => {
+    alert("Not implemented yet!")
+  }
+
   return (
     <Box className="flex flex-col gap-5">
       <Box>
         <p>Welcome to BioStack, a FastAPI/NextJS exercise</p>
         <p>Find below the most recent Samples.</p>
       </Box>
-      <Button disabled={status === "loading"} onClick={handleRefresh}>Refresh</Button>
+      <Box className="flex gap-1">
+        <Button disabled={status === "loading"} onClick={handleRefresh}>Refresh</Button>
+        <Button onClick={handleCreateSample}>Create Sample</Button>
+      </Box>
       <Table
         rows={page.items}
         page={page.index}

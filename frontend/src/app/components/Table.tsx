@@ -39,9 +39,9 @@ export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage
     };
 
     return (
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
+        <table className="table-auto">
+            <thead >
+                <tr className="bg-black/10 *:text-bold *:border *:p-2">
                     <th>Name</th>
                     <th>Type</th>
                     <th>Date Collected</th>
@@ -49,7 +49,7 @@ export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage
             </thead>
             <tbody>
                 {rows.map((row) => (
-                    <tr key={row.id}>
+                    <tr key={row.id} className="bg-white/50 *:border *:p-2" >
                         <td>{row.name}</td>
                         <td>{row.type}</td>
                         <td>{row.date}</td>

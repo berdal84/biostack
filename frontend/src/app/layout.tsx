@@ -38,7 +38,7 @@ export default function RootLayout({
             <h2 className="text-xs italic">{metadata.description}</h2>
           </header>
 
-          <main className="flex-auto p-5">
+          <main className="flex-auto w-full p-5">
             <AppContextProvider>
               {children}
             </AppContextProvider>
