@@ -1,9 +1,9 @@
 
-# BioStack's Frotend
+# BioStack's Frontend
 
-TODO
+Frontend to dialog with BioStack's API.
 
-## Install it
+## Install
 
 Install the dependencies:
 
@@ -11,7 +11,7 @@ Install the dependencies:
 npm install
 ```
 
-## Run it
+## Run
 
 Run the development server:
 
@@ -24,6 +24,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Deployment
 
-Not implemented yet
+## Build & Deployment
+
+To build the app for production, run:
+
+```
+npm run build
+```
+
+WIP: See [nextjs](https://nextjs.org/docs/pages/building-your-application/deploying) documentation for next steps.
