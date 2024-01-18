@@ -27,12 +27,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 
-## Build & Deployment
+## Deployment
 
-To build the app for production, run:
+Prerequisites:
+- docker 3.8+ & docker-compose installed
+
+Run the following command to build and deploy localy
 
 ```
-npm run build
+docker compose -f "docker-compose.prod.yml" up -d --build
 ```
-
-WIP: See [nextjs](https://nextjs.org/docs/pages/building-your-application/deploying) documentation for next steps.
