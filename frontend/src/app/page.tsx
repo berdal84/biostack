@@ -3,10 +3,16 @@ import { Box } from "@mui/material"
 import Button from "@/app/components/Button"
 import Table from "@/app/components/Table"
 import { useAppContext, useAppDispatchContext } from "@/app/contexts/AppContext";
+import { useEffect } from "react";
 
 export default function Home() {
   const { page: currentPage, pageIndex, pageLimit } = useAppContext()
   const dispatch = useAppDispatchContext()
+
+  useEffect(() => {
+    // Trigger a fetch once
+    dispatch({ type: "fetch", payload: {} })
+  }, [])
 
   const handleSetPage = (newPage: number) => {
     dispatch({ type: "fetch", payload: { page: newPage } })
