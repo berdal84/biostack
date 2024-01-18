@@ -3,13 +3,7 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { getFormattedYearRange } from './utilities/date'
-
-// Material UI default fonts
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import CssBaseline from '@mui/material/CssBaseline'
+import { AppContextProvider } from './contexts/AppContext'
 
 const inter = Inter({ subsets: ['latin'] })
 const formattedYearRange = getFormattedYearRange(2024)
@@ -36,7 +30,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <CssBaseline />
         <div className="flex p-1 min-h-screen flex-col items-center justify-between">
 
           <header className="flex flex-col items-center">
@@ -46,7 +39,9 @@ export default function RootLayout({
           </header>
 
           <main className="flex-auto p-5">
-            {children}
+            <AppContextProvider>
+              {children}
+            </AppContextProvider>
           </main>
 
           <footer>
