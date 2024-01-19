@@ -9,12 +9,14 @@ type SampleEditorProps = {
     onClose: () => void;
     /** Triggered when user click on edit button */
     onEdit: (sample: Sample) => void;
+    /** Triggered when user click on delete button */
+    onDelete: (sample: Sample) => void;
 }
 
 /**
  * UI to visualize Sample details
  */
-export default function SampleDetails({ sample, onEdit, onClose }: SampleEditorProps) {
+export default function SampleDetails({ sample, onEdit, onClose, onDelete }: SampleEditorProps) {
 
     if (sample === null) {
         return <Box>
@@ -28,6 +30,10 @@ export default function SampleDetails({ sample, onEdit, onClose }: SampleEditorP
         sample && onEdit(sample)
     }
 
+    function handleDelete(): void {
+        sample && onDelete(sample)
+    }
+
     function handleClose(): void {
         onClose()
     }
@@ -35,6 +41,7 @@ export default function SampleDetails({ sample, onEdit, onClose }: SampleEditorP
     return (
         <Box className="border p-5">
             <Box className="flex gap-2 justify-items-end mb-5">
+                <Button onClick={() => handleDelete()}>Delete</Button>
                 <Button onClick={() => handleEdit()}>Edit</Button>
                 <Button onClick={() => handleClose()}>Close</Button>
             </Box>
@@ -54,7 +61,7 @@ export default function SampleDetails({ sample, onEdit, onClose }: SampleEditorP
                             <td>{type}</td>
                         </tr>
                         <tr>
-                            <td>Date</td>
+                            <td>Date Collected</td>
                             <td>{date}</td>
                         </tr>
                         <tr>

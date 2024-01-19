@@ -3,12 +3,13 @@ import { Box } from "@mui/material"
 import Button from "@/app/components/Button"
 import Table from "@/app/components/Table"
 import { useAppContext, useAppDispatchContext } from "@/app/contexts/AppContext";
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { useAPI } from "@/app/utilities/useApi";
 import SampleDetails from "./components/SampleDetails";
 import { Sample, SampleCreate } from "@/app/types";
 import { useQueryState } from "nuqs";
 import SampleDialog from "./components/SampleDialog";
+import {ConfirmationDialog} from "@/app/components/ConfirmationDialog";
 
 export default function Home() {
 
@@ -16,14 +17,15 @@ export default function Home() {
   const [sampleId, setSampleId] = useQueryState('sample-id')
   const { page, status, statusMessage, sample } = useAppContext()
   const dispatch = useAppDispatchContext();
-  const { getPage, getSample, createSample } = useAPI()
+  const api = useAPI()
   const [dialogEditOpen, setDialogEditOpen] = useState(false);
   const [dialogCreateOpen, setDialogCreateOpen] = useState(false);
+  const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
 
   /** Update current sample when sampleId (url param) changes */
   useEffect(() => {
     if (sampleId) {
-      getSample(parseInt(sampleId, 10))
+      api.getSample(parseInt(sampleId, 10))
     } else {
       dispatch({ type: "setSample", payload: { sample: null } })
     }
@@ -31,22 +33,22 @@ export default function Home() {
 
   /** On mount */
   useEffect(() => {
-    getPage()
+    api.getPage()
   }, [])
 
   const handleSetPage = (newPage: number) => {
-    getPage(newPage);
+    api.getPage(newPage);
   }
 
   const handleSetRowsPerPage = (newLimit: number) => {
-    getPage(page.index, newLimit)
+    api.getPage(page.index, newLimit)
   }
 
   const handleRefresh = async () => {
-    await getPage();
+    await api.getPage();
 
     if (sample !== null) {
-      getSample(sample.id);
+      api.getSample(sample.id);
     }
   }
 
@@ -70,9 +72,12 @@ export default function Home() {
     setSampleId(null)
   }
 
-  function handleCreate(sample: SampleCreate): Promise<Sample | null> {
-    return createSample(sample)
-  }
+  const handleDialogDeleteClose = useCallback( async (agree?: boolean) => {
+    if ( agree && sample ) {
+      await api.deleteSample(sample.id);
+    }
+    setDialogDeleteOpen(false);
+  }, [api, sample])
 
   return (
     <Box className="flex flex-col gap-5">
@@ -111,6 +116,7 @@ export default function Home() {
             sample={sample}
             onEdit={handleEdit}
             onClose={handleClose}
+            onDelete={() => setDialogDeleteOpen(true)}
           />
         </Box>
       </Box>
@@ -128,6 +134,18 @@ export default function Home() {
         open={dialogEditOpen}
         setOpen={setDialogEditOpen}
       />}
+      {/** Delete Sample Dialog */}
+      {sample && <ConfirmationDialog
+          open={dialogDeleteOpen}
+          onClose={handleDialogDeleteClose}
+          title="Delete a Sample"
+      >
+        <Box className={"flex gap-5 flex-col"}>
+          <p>You are about to delete <i>{sample.name} (id: {sample.id})</i>. It cannot be undo.</p>
+          <p>Are you sure?</p>
+        </Box>
+      </ConfirmationDialog>
+      }
     </Box>
   )
 }

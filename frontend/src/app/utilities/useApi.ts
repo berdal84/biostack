@@ -10,7 +10,6 @@ import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
 const api = axios.create({
     baseURL: 'http://localhost:8000/sample', // TODO: read from env vars
     timeout: 3000,
-    headers: {}
 });
 
 /**
@@ -25,7 +24,7 @@ export function useAPI() {
      * Dispatch the error status and return null
      * TODO: add an optionnal defaultResponse in arguments, to return something different than null.
     */
-    const handleError = useCallback((reason: any): null => {
+    const handleError =  useCallback(async (reason: any) => {
         dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
         return null;
     }, [dispatch])
@@ -38,7 +37,7 @@ export function useAPI() {
     const getPage = useCallback(async (
         index: number = state.page.index,
         limit: number = state.page.limit
-    ): Promise<Page<Sample> | null> => {
+    ) => {
 
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
 
@@ -68,7 +67,7 @@ export function useAPI() {
     /**
      * Get a sample from a given id.
      */
-    const getSample = useCallback((id: number): Promise<Sample | null> => {
+    const getSample = useCallback((id: number) => {
 
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
 
@@ -84,7 +83,7 @@ export function useAPI() {
     /**
      * Create a new sample
      */
-    const createSample = useCallback((sample: SampleCreate): Promise<Sample | null> => {
+    const createSample = useCallback((sample: SampleCreate) => {
         return api.post<Sample>("/", sample)
             .then((response) => {
                 const sample = response.data;
@@ -98,7 +97,7 @@ export function useAPI() {
      * @param id sample id to update
      * @param changes the changes to apply
      */
-    const updateSample = useCallback((id: Sample['id'], changes: SampleUpdate): Promise<Sample | null> => {
+    const updateSample = useCallback((id: Sample['id'], changes: SampleUpdate) => {
         return api.put<Sample>(`/${id}`, changes)
             .then((response) => {
                 const sample = response.data;
@@ -107,11 +106,24 @@ export function useAPI() {
             }).catch(handleError);
     }, [dispatch, handleError]);
 
+    /**
+     * Delete a given sample
+     * @param id sample id to delete
+     */
+    const deleteSample = useCallback((id: Sample['id']) => {
+        return api.delete(`/${id}`)
+            .then((response) => {
+                dispatch({ type: 'setSample', payload: { sample: null } })
+                return response.data;
+            }).catch(handleError);
+    }, [dispatch, handleError]);
+
     return {
         getPage,
         getSample,
         createSample,
         updateSample,
+        deleteSample,
     }
 }
 
