@@ -37,13 +37,13 @@ const DEFAULT_VALUES: FormType = {
  * Sample dialog to create or edit a sample.
  */
 export default function SampleDialog({ sample, open, setOpen }: SampleDialogProps) {
-
     const { createSample, updateSample } = useAPI()
-    const title = sample ? `Edit Sample "${sample.name}" (id ${sample.id})` : "Create Sample";
-    const submitButtonLabel = sample ? "Save" : "Create";
+    /** Check if sample is being edited, ensure at compile time sample is not undefined when return true */
     const isEditing = (sample: Sample|undefined): sample is Sample => {
         return sample?.id !== undefined;
     }
+    const title = isEditing(sample) ? `Edit Sample "${sample.name}" (id ${sample.id})` : "Create Sample";
+    const submitButtonLabel = isEditing(sample) ? "Save" : "Create";
 
     /** Uses formik to handle form state and actions */
     const formik = useFormik<FormType>({
