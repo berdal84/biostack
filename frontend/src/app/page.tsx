@@ -27,7 +27,7 @@ export default function Home() {
     } else {
       dispatch({ type: "setSample", payload: { sample: null } })
     }
-  }, [dispatch, getSample, sampleId])
+  }, [sampleId])
 
   /** On mount */
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function Home() {
   }
 
   const handleCreateSample = () => {
-    setDialogEditOpen(true);
+    setDialogCreateOpen(true);
   }
 
   function handleSampleChange(newValues: Sample): void {
@@ -117,18 +117,17 @@ export default function Home() {
       <p hidden={status !== "loading"} className="text-grey-500">Loading...</p>
       <p hidden={status !== "error"} className="text-red-500" title={statusMessage} >Error: see console</p>
 
-      {/** Create Sample Dialog */}    
+      {/** Create Sample Dialog */}
       <SampleDialog
-        sample={null}
         open={dialogCreateOpen}
         setOpen={setDialogCreateOpen}
       />
-      {/** Edit Sample Dialog */}  
-      <SampleDialog
+      {/** Edit Sample Dialog */}
+      {sample && <SampleDialog
         sample={sample}
         open={dialogEditOpen}
         setOpen={setDialogEditOpen}
-      />
+      />}
     </Box>
   )
 }
