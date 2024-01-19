@@ -97,7 +97,6 @@ export default function SampleDialog({ sample, open, setOpen }: SampleDialogProp
             <DialogContent>
                 <DialogContentText>
                     <span>Please provide information about your sample and press {submitButtonLabel}</span>
-                    { !isEditing(sample) && <span className="text-xs italic">WIP: you will be able to attach a file to your sample once it created.</span>}
                 </DialogContentText>
                 <TextField
                     autoFocus
@@ -154,6 +153,7 @@ export default function SampleDialog({ sample, open, setOpen }: SampleDialogProp
                         onChange={formik.handleChange}
                     />
                 </>}
+                { !isEditing(sample) && <span className="text-xs italic">WIP: you will be able to attach a file to your sample once it created.</span>}
 
             </DialogContent>
             <DialogActions>
