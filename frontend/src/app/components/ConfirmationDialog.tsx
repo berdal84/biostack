@@ -6,6 +6,7 @@ import Dialog from "@mui/material/Dialog";
 import {PropsWithChildren} from "react";
 
 export interface ConfirmationDialogRawProps {
+    title: string;
     open: boolean;
     onClose: (value?: boolean) => void;
 }
