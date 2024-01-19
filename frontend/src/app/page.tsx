@@ -106,6 +106,7 @@ export default function Home() {
         <Box className="flex flex-col gap-2 flex-auto">
           <h1 className="text-lg underline">Sample List:</h1>
           <Table
+            selectedId={sample?.id}
             rows={page.items}
             page={page.index}
             setPage={handleSetPage}

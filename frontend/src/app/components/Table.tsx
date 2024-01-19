@@ -6,6 +6,8 @@ import { Sample } from '@/app/types';
 import { SampleCreate } from '../types/Sample';
 
 export type TableProps = {
+    /** The selected sample id */
+    selectedId?: number;
     /** The rows to display for the current page */
     rows: Sample[];
     /** The current page index (zero-based) */
@@ -26,7 +28,7 @@ export type TableProps = {
  * 
  * Adapted from https://mui.com/base-ui/react-table-pagination/
  */
-export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage, count, onClick }: TableProps) {
+export default function Table({ selectedId, rows, page, setPage, rowsPerPage, setRowsPerPage, count, onClick }: TableProps) {
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -57,7 +59,7 @@ export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage
             <tbody>
                 {rows.map((sample: Sample) => (
                     <tr key={sample.id}
-                        className="bg-white/50 *:border *:p-2"
+                        className="bg-white/50 *:border *:p-3 hover:underline *:cursor-pointer"
                         onClick={() => handleClick(sample)}
                     >
                         <td>{sample.name}</td>
