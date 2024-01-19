@@ -3,6 +3,7 @@ import * as React from 'react';
 import { TablePagination } from '@mui/base/TablePagination';
 import { Box } from '@mui/material';
 import { Sample } from '@/app/types';
+import { SampleCreate } from '../types/Sample';
 
 export type TableProps = {
     /** The rows to display for the current page */
@@ -15,6 +16,8 @@ export type TableProps = {
     setRowsPerPage: (n: number) => void;
     /** The total item count */
     count: number;
+    /** Triggered when a row is clicked */
+    onClick: (sample: Sample) => void;
 }
 
 /**
@@ -23,7 +26,7 @@ export type TableProps = {
  * 
  * Adapted from https://mui.com/base-ui/react-table-pagination/
  */
-export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage, count }: TableProps) {
+export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage, count, onClick }: TableProps) {
 
     const handleChangePage = (
         event: React.MouseEvent<HTMLButtonElement> | null,
@@ -38,6 +41,10 @@ export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage
         setRowsPerPage(parseInt(event.target.value, 10));
     };
 
+    function handleClick(sample: Sample): void {
+        onClick(sample)
+    }
+
     return (
         <table className="table-auto">
             <thead >
@@ -48,11 +55,14 @@ export default function Table({ rows, page, setPage, rowsPerPage, setRowsPerPage
                 </tr>
             </thead>
             <tbody>
-                {rows.map((row) => (
-                    <tr key={row.id} className="bg-white/50 *:border *:p-2" >
-                        <td>{row.name}</td>
-                        <td>{row.type}</td>
-                        <td>{row.date}</td>
+                {rows.map((sample: Sample) => (
+                    <tr key={sample.id}
+                        className="bg-white/50 *:border *:p-2"
+                        onClick={() => handleClick(sample)}
+                    >
+                        <td>{sample.name}</td>
+                        <td>{sample.type}</td>
+                        <td>{sample.date}</td>
                         {/* TODO: add a file icon if rox.file_name not null */}
                     </tr>
                 ))}

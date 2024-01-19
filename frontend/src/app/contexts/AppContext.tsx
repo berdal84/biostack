@@ -8,6 +8,7 @@ type Status = "loading" | "error" | "pending";
 type Action =
     { type: 'setStatus', payload: { status: Status, message?: string } } |
     { type: 'setPage', payload: { page: Page<Sample> } } |
+    { type: 'setSample', payload: { sample: Sample | null } } |
     { type: string, payload: never }
 
 
@@ -17,6 +18,8 @@ type AppState = {
     statusMessage?: string;
     /** Cached page (last fetch result) */
     page: Page<Sample>;
+    /** The currently focused sample */
+    sample: Sample | null;
 }
 
 const AppContext = createContext<AppState | null>(null);
@@ -59,6 +62,13 @@ function appReducer(state: AppState, action: Action): AppState {
                 page: action.payload.page,
             }
         }
+        case 'setSample': {
+            return {
+                ...state,
+                status: "pending", // We consider one request at a time for now
+                sample: action.payload.sample,
+            }
+        }
         case 'setStatus': {
             return {
                 ...state,
@@ -84,7 +94,8 @@ export function AppContextProvider({ children }: PropsWithChildren) {
             total_item_count: 0,
             index: 0,
             limit: 5
-        }
+        },
+        sample: null
     } as AppState);
 
     return (

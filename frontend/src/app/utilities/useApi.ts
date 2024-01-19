@@ -53,8 +53,29 @@ export function useAPI() {
             });
     }, [state])
 
+    /**
+     * Callback to trigger the fetch of a given sample from a given id.
+     */
+    const fetchSample = useCallback((id: number | null) => {
+
+        if (id === null) {
+            return dispatch({ type: 'setSample', payload: { sample: null } })
+        }
+
+        dispatch({ type: 'setStatus', payload: { status: 'loading' } })
+
+        api.get<Sample>(`/${id}`)
+            .then((response) => {
+                dispatch({ type: 'setSample', payload: { sample: response.data } })
+
+            }).catch((reason: any) => {
+                dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
+            });
+    }, [])
+
     return {
-        fetchPage
+        fetchPage,
+        fetchSample
     }
 }
 
