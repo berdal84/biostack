@@ -74,7 +74,7 @@ export default function SampleDialog({ sample, open, setOpen }: SampleDialogProp
             if (result) {
                 setOpen(false)
             } else {
-                alert(`Unable to ${sample != null} ? "update" : "create"!}`)
+                alert(`Unable to ${sample ? "update" : "create"} sample, check console.`)
             }
         },
     });
