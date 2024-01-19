@@ -23,14 +23,14 @@ export function useAPI() {
     /**
      * Callback to trigger the fetch of a given page
      */
-    const fetchPage = useCallback((
+    const fetchPage = useCallback(async (
         index: number = state.page.index,
         limit: number = state.page.limit
     ) => {
 
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
 
-        api.get<Page<Sample>>(
+        return api.get<Page<Sample>>(
             '/',
             {
                 params: {
@@ -64,7 +64,7 @@ export function useAPI() {
 
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
 
-        api.get<Sample>(`/${id}`)
+        return api.get<Sample>(`/${id}`)
             .then((response) => {
                 dispatch({ type: 'setSample', payload: { sample: response.data } })
 

@@ -35,8 +35,12 @@ export default function Home() {
     fetchPage(page.index, newLimit)
   }
 
-  const handleRefresh = () => {
-    fetchPage()
+  const handleRefresh = async () => {
+    await fetchPage();
+
+    if (sample !== null) {
+      fetchSample(sample.id);
+    }
   }
 
   const handleCreateSample = () => {
@@ -49,6 +53,14 @@ export default function Home() {
 
   function handleSampleClick(sample: Sample): void {
     setSampleId(String(sample.id))
+  }
+
+  function handleEdit(sample: Sample): void {
+    alert("Function not implemented.");
+  }
+
+  function handleClose(): void {
+    setSampleId(null)
   }
 
   return (
@@ -84,7 +96,12 @@ export default function Home() {
         {/* Right side */}
         <Box className="flex flex-col gap-2 flex-1">
           <h1 className="text-lg underline">Selected Sample:</h1>
-          <SampleEditor sample={sample} onChange={handleSampleChange} />
+          <SampleEditor
+            sample={sample}
+            onChange={handleSampleChange}
+            onEdit={handleEdit}
+            onClose={handleClose}
+          />
         </Box>
       </Box>
       <p hidden={status !== "loading"} className="text-grey-500">Loading...</p>
