@@ -57,9 +57,8 @@ export function useAPI() {
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
         try {
             const response: AxiosResponse<Sample> = await api.get(`/${id}`);
-            const sample = response.data;
-            dispatch({type: 'setSample', payload: {sample}})
-            return sample;
+            dispatch({type: 'setSample', payload: {sample: response.data}})
+            return response.data;
         } catch (error: any) {
             return handleError(error)
         }
@@ -69,23 +68,22 @@ export function useAPI() {
     /**
      * Create a new sample
      */
-    const createSample = useCallback(async (sample: SampleCreate) => {
+    const createSample = async (sample: SampleCreate) => {
         try {
             const response: AxiosResponse<Sample> = await api.post("/", sample);
-            const sample = response.data;
-            dispatch({ type: 'setSample', payload: { sample } })
-            return sample;
+            dispatch({ type: 'setSample', payload: { sample: response.data } })
+            return response.data;
         } catch (error: any) {
             return handleError(error)
         }
-    }, [dispatch, handleError]);
+    };
 
     /**
      * Update a given sample
      * @param id sample id to update
      * @param changes the changes to apply
      */
-    const updateSample = useCallback(async (id: Sample['id'], changes: SampleUpdate) => {
+    const updateSample = async (id: Sample['id'], changes: SampleUpdate) => {
         try {
             const response: AxiosResponse<Sample> = await api.put(`/${id}`, changes)
             const sample = response.data;
@@ -94,13 +92,13 @@ export function useAPI() {
         } catch (error: any) {
             return handleError(error)
         }
-    }, [dispatch, handleError]);
+    };
 
     /**
      * Delete a given sample
      * @param id sample id to delete
      */
-    const deleteSample = useCallback(async (id: Sample['id']) => {
+    const deleteSample = async (id: Sample['id']) => {
         try {
             const response: AxiosResponse<Sample> = await  api.delete(`/${id}`)
             dispatch({ type: 'setSample', payload: { sample: null } })
@@ -108,7 +106,7 @@ export function useAPI() {
         } catch (error: any) {
             return handleError(error)
         }
-    }, [dispatch, handleError]);
+    };
 
     return {
         getPage,
