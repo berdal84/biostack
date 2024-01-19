@@ -74,7 +74,10 @@ export default function Home() {
 
   const handleDialogDeleteClose = useCallback( async (agree?: boolean) => {
     if ( agree && sample ) {
+      // If user agreed, delete sample and refresh.
       await api.deleteSample(sample.id);
+      await setSampleId(null); // would give a 404 if we keep the current sample.id
+      await handleRefresh()
     }
     setDialogDeleteOpen(false);
   }, [api, sample])

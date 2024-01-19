@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import { useCallback } from "react";
 import { useAppContext, useAppDispatchContext } from "../contexts/AppContext";
 import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
@@ -38,58 +38,46 @@ export function useAPI() {
         index: number = state.page.index,
         limit: number = state.page.limit
     ) => {
-
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
-
-        return api.get<Page<Sample>>(
-            '/',
-            {
-                params: {
-                    index,
-                    limit
-                },
-            })
-            .then((response) => {
-
-                console.debug(response.data);
-                console.debug(response.status);
-                console.debug(response.statusText);
-                console.debug(response.headers);
-                console.debug(response.config);
-
-                dispatch({ type: 'setPage', payload: { page: response.data } })
-
-                return response.data;
-
-            }).catch(handleError);
+        try {
+            // TODO: investigate why my IDE highlight "params" while it is working fine at runtime
+            const response: AxiosResponse<Page<Sample>> = await api.get('/', { params: { index, limit }})
+            const page = response.data;
+            dispatch({ type: 'setPage', payload: { page: response.data } })
+            return page;
+        } catch (error: any) {
+            return handleError(error)
+        }
     }, [state, dispatch, handleError])
 
     /**
      * Get a sample from a given id.
      */
-    const getSample = useCallback((id: number) => {
-
+    const getSample = useCallback(async (id: number): Promise<Sample | null> => {
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
-
-        return api.get<Sample>(`/${id}`)
-            .then((response) => {
-                const sample = response.data;
-                dispatch({ type: 'setSample', payload: { sample } })
-                return sample;
-            }).catch(handleError);
+        try {
+            const response: AxiosResponse<Sample> = await api.get(`/${id}`);
+            const sample = response.data;
+            dispatch({type: 'setSample', payload: {sample}})
+            return sample;
+        } catch (error: any) {
+            return handleError(error)
+        }
     }, [dispatch, handleError])
 
 
     /**
      * Create a new sample
      */
-    const createSample = useCallback((sample: SampleCreate) => {
-        return api.post<Sample>("/", sample)
-            .then((response) => {
-                const sample = response.data;
-                dispatch({ type: 'setSample', payload: { sample } })
-                return sample;
-            }).catch(handleError);
+    const createSample = useCallback(async (sample: SampleCreate) => {
+        try {
+            const response: AxiosResponse<Sample> = await api.post("/", sample);
+            const sample = response.data;
+            dispatch({ type: 'setSample', payload: { sample } })
+            return sample;
+        } catch (error: any) {
+            return handleError(error)
+        }
     }, [dispatch, handleError]);
 
     /**
@@ -97,25 +85,29 @@ export function useAPI() {
      * @param id sample id to update
      * @param changes the changes to apply
      */
-    const updateSample = useCallback((id: Sample['id'], changes: SampleUpdate) => {
-        return api.put<Sample>(`/${id}`, changes)
-            .then((response) => {
-                const sample = response.data;
-                dispatch({ type: 'setSample', payload: { sample } })
-                return sample;
-            }).catch(handleError);
+    const updateSample = useCallback(async (id: Sample['id'], changes: SampleUpdate) => {
+        try {
+            const response: AxiosResponse<Sample> = await api.put(`/${id}`, changes)
+            const sample = response.data;
+            dispatch({ type: 'setSample', payload: { sample } })
+            return sample;
+        } catch (error: any) {
+            return handleError(error)
+        }
     }, [dispatch, handleError]);
 
     /**
      * Delete a given sample
      * @param id sample id to delete
      */
-    const deleteSample = useCallback((id: Sample['id']) => {
-        return api.delete(`/${id}`)
-            .then((response) => {
-                dispatch({ type: 'setSample', payload: { sample: null } })
-                return response.data;
-            }).catch(handleError);
+    const deleteSample = useCallback(async (id: Sample['id']) => {
+        try {
+            const response: AxiosResponse<Sample> = await  api.delete(`/${id}`)
+            dispatch({ type: 'setSample', payload: { sample: null } })
+            return response.data;
+        } catch (error: any) {
+            return handleError(error)
+        }
     }, [dispatch, handleError]);
 
     return {
