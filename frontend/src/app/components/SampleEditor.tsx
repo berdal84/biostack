@@ -26,7 +26,18 @@ export default function SampleEditor({ sample, onChange }: SampleEditorProps) {
             <p>Name: {name}</p>
             <p>Type: {type}</p>
             <p>Date: {date}</p>
-            <p>File: {file_name}</p>
+            <p>File: {file_name ?
+                <a
+                    href={`http://localhost:8000/sample/${id}/download`}
+                    className="underline"
+                    target="_blank"
+                    title="Download or Open file in a tab"
+                >
+                    {file_name}
+                </a>
+                :
+                '-'}
+            </p>
             <Button disabled>Save</Button>
         </Box>
     )
