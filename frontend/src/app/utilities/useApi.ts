@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback } from "react";
 import { useAppContext, useAppDispatchContext } from "../contexts/AppContext";
-import { Page, Sample } from "@/app/types";
+import { Page, Sample, SampleCreate } from "@/app/types";
 
 /**
  * Create a new AXIOS instance to query the API
@@ -23,7 +23,7 @@ export function useAPI() {
     /**
      * Callback to trigger the fetch of a given page
      */
-    const fetchPage = useCallback(async (
+    const getPage = useCallback(async (
         index: number = state.page.index,
         limit: number = state.page.limit
     ) => {
@@ -48,6 +48,8 @@ export function useAPI() {
 
                 dispatch({ type: 'setPage', payload: { page: response.data } })
 
+                return response.data;
+
             }).catch((reason: any) => {
                 dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
             });
@@ -56,7 +58,7 @@ export function useAPI() {
     /**
      * Callback to trigger the fetch of a given sample from a given id.
      */
-    const fetchSample = useCallback((id: number | null) => {
+    const getSample = useCallback((id: number | null) => {
 
         if (id === null) {
             return dispatch({ type: 'setSample', payload: { sample: null } })
@@ -67,15 +69,27 @@ export function useAPI() {
         return api.get<Sample>(`/${id}`)
             .then((response) => {
                 dispatch({ type: 'setSample', payload: { sample: response.data } })
-
+                return response.data;
             }).catch((reason: any) => {
                 dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
             });
     }, [])
 
+
+    const createSample = (sample: SampleCreate) => {
+        return api.post<Sample>("/", sample)
+            .then((response) => {
+                return response.data;
+            }).catch((reason: any) => {
+                dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
+                return null;
+            });
+    }
+
     return {
-        fetchPage,
-        fetchSample
+        fetchPage: getPage,
+        fetchSample: getSample,
+        createSample
     }
 }
 

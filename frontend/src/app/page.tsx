@@ -3,11 +3,12 @@ import { Box } from "@mui/material"
 import Button from "@/app/components/Button"
 import Table from "@/app/components/Table"
 import { useAppContext } from "@/app/contexts/AppContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAPI } from "@/app/utilities/useApi";
 import SampleEditor from "./components/SampleEditor";
-import { Sample } from "@/app/types";
+import { Sample, SampleCreate } from "@/app/types";
 import { useQueryState } from "nuqs";
+import SampleDialog from "./components/SampleDialog";
 
 export default function Home() {
 
@@ -15,7 +16,9 @@ export default function Home() {
   const [sampleId, setSampleId] = useQueryState('sample-id')
 
   const { page, status, statusMessage, sample } = useAppContext()
-  const { fetchPage, fetchSample } = useAPI()
+  const { fetchPage, fetchSample, createSample } = useAPI()
+
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   /** Fetch sample when sampleId (url param) changes */
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function Home() {
   }
 
   const handleCreateSample = () => {
-    alert("Function not implemented.");
+    setDialogOpen(true)
   }
 
   function handleSampleChange(newValues: Sample): void {
@@ -61,6 +64,10 @@ export default function Home() {
 
   function handleClose(): void {
     setSampleId(null)
+  }
+
+  function handleCreate(sample: SampleCreate): Promise<Sample | null> {
+    return createSample(sample)
   }
 
   return (
@@ -106,6 +113,13 @@ export default function Home() {
       </Box>
       <p hidden={status !== "loading"} className="text-grey-500">Loading...</p>
       <p hidden={status !== "error"} className="text-red-500" title={statusMessage} >Error: see console</p>
+
+      <SampleDialog
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+        title="Create a new Sample"
+        submit={handleCreate}
+      />
     </Box>
   )
 }
