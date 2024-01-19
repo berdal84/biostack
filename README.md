@@ -1,6 +1,12 @@
-# Biostack, a FastAPI / Nextjs exercise
 
-This project consists on a front and backend to manage Biotech Data.
+[![Frontend CI](https://github.com/berdal84/biostack/actions/workflows/node.js.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/node.js.yml)
+
+# Biostack
+
+This project is a client/server to manage Biotech Data. It is implemented using FastAPI and NextJS, with a Postgres database.
+Code is written in Python and TypeScript.
+
+_Note: this project is an exercise_
 
 ## Quick Start
 
@@ -16,25 +22,20 @@ To install and run both front and back end, run the following commands:
 Then, browse [localhost:3000](http://localhost:3000) to open the app.
 Or browse [localhost:8000/docs](http://localhost:8000/docs) to access backend documentation.
 
-For more information, read all the README files.
 The front and back end are located in [`./frontend`](./frontend) and [`./backend`](./backend) folders respectively.
+For more information, read [backend's readme](./backend/README.md) and [frontend's readme](./frontend/README.md) go know more about it.
 
+## Road Map
 
-## [Backend](./backend)
+### General
+- Permissions: add a user table and credentials on the API
+- Use multipart/form-data to upload a sample (name, type,..., and file! )
 
-We rely on the following technologies:
-- Python
-- FastAPI
-- Postgres
+### Frontend
+- Implement file upload on the UI
+- Highlight items in the light, so user can understand they are clickable.
+- Add small icon-buttons to edit/delete/view a sample (only visible when row is hovered)
 
-More information in the dedicated [readme](./backend/README.md).
-
-## [Frontend](./frontend)
-
-And for the frontend:
-- Typescript
-- Nextjs
-- MUI
-
-More information in the dedicated [readme](./frontend/README.md).
-
+### Backend
+- Add postres and fastapi to the existing docker-compose.yml
+- User Github actions to run pytest with postgres (service)
