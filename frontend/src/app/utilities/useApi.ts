@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useCallback } from "react";
 import { useAppContext, useAppDispatchContext } from "../contexts/AppContext";
-import { Page, Sample, SampleCreate } from "@/app/types";
+import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
 
 /**
  * Create a new AXIOS instance to query the API
@@ -21,12 +21,24 @@ export function useAPI() {
     const dispatch = useAppDispatchContext();
 
     /**
-     * Callback to trigger the fetch of a given page
+     * Unique handler for errors
+     * Dispatch the error status and return null
+     * TODO: add an optionnal defaultResponse in arguments, to return something different than null.
+    */
+    const handleError = useCallback((reason: any): null => {
+        dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
+        return null;
+    }, [dispatch])
+
+    /**
+     * Get a page
+     * @param index the page index to fetch (default is current page.index)
+     * @param limit the page item limit (default is current page.limit)
      */
     const getPage = useCallback(async (
         index: number = state.page.index,
         limit: number = state.page.limit
-    ) => {
+    ): Promise<Page<Sample> | null> => {
 
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
 
@@ -50,46 +62,56 @@ export function useAPI() {
 
                 return response.data;
 
-            }).catch((reason: any) => {
-                dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
-            });
-    }, [state])
+            }).catch(handleError);
+    }, [state, dispatch, handleError])
 
     /**
-     * Callback to trigger the fetch of a given sample from a given id.
+     * Get a sample from a given id.
      */
-    const getSample = useCallback((id: number | null) => {
-
-        if (id === null) {
-            return dispatch({ type: 'setSample', payload: { sample: null } })
-        }
+    const getSample = useCallback((id: number): Promise<Sample | null> => {
 
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
 
         return api.get<Sample>(`/${id}`)
             .then((response) => {
-                dispatch({ type: 'setSample', payload: { sample: response.data } })
-                return response.data;
-            }).catch((reason: any) => {
-                dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
-            });
-    }, [])
+                const sample = response.data;
+                dispatch({ type: 'setSample', payload: { sample } })
+                return sample;
+            }).catch(handleError);
+    }, [dispatch, handleError])
 
 
-    const createSample = (sample: SampleCreate) => {
+    /**
+     * Create a new sample
+     */
+    const createSample = useCallback((sample: SampleCreate): Promise<Sample | null> => {
         return api.post<Sample>("/", sample)
             .then((response) => {
-                return response.data;
-            }).catch((reason: any) => {
-                dispatch({ type: 'setStatus', payload: { status: "error", message: JSON.stringify(reason) } })
-                return null;
-            });
-    }
+                const sample = response.data;
+                dispatch({ type: 'setSample', payload: { sample } })
+                return sample;
+            }).catch(handleError);
+    }, [dispatch, handleError]);
+
+    /**
+     * Update a given sample
+     * @param id sample id to update
+     * @param changes the changes to apply
+     */
+    const updateSample = useCallback((id: Sample['id'], changes: SampleUpdate): Promise<Sample | null> => {
+        return api.put<Sample>(`/${id}`, changes)
+            .then((response) => {
+                const sample = response.data;
+                dispatch({ type: 'setSample', payload: { sample } })
+                return sample;
+            }).catch(handleError);
+    }, [dispatch, handleError]);
 
     return {
-        fetchPage: getPage,
-        fetchSample: getSample,
-        createSample
+        getPage,
+        getSample,
+        createSample,
+        updateSample,
     }
 }
 

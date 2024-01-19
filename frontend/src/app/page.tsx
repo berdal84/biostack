@@ -2,10 +2,10 @@
 import { Box } from "@mui/material"
 import Button from "@/app/components/Button"
 import Table from "@/app/components/Table"
-import { useAppContext } from "@/app/contexts/AppContext";
+import { useAppContext, useAppDispatchContext } from "@/app/contexts/AppContext";
 import { useEffect, useState } from "react";
 import { useAPI } from "@/app/utilities/useApi";
-import SampleEditor from "./components/SampleEditor";
+import SampleDetails from "./components/SampleDetails";
 import { Sample, SampleCreate } from "@/app/types";
 import { useQueryState } from "nuqs";
 import SampleDialog from "./components/SampleDialog";
@@ -14,40 +14,44 @@ export default function Home() {
 
   // Read url parameter "sample-id" to determine which sample to fetch
   const [sampleId, setSampleId] = useQueryState('sample-id')
-
   const { page, status, statusMessage, sample } = useAppContext()
-  const { fetchPage, fetchSample, createSample } = useAPI()
+  const dispatch = useAppDispatchContext();
+  const { getPage, getSample, createSample } = useAPI()
+  const [dialogEditOpen, setDialogEditOpen] = useState(false);
+  const [dialogCreateOpen, setDialogCreateOpen] = useState(false);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  /** Fetch sample when sampleId (url param) changes */
+  /** Update current sample when sampleId (url param) changes */
   useEffect(() => {
-    fetchSample(sampleId ? parseInt(sampleId) : null)
-  }, [sampleId])
+    if (sampleId) {
+      getSample(parseInt(sampleId, 10))
+    } else {
+      dispatch({ type: "setSample", payload: { sample: null } })
+    }
+  }, [dispatch, getSample, sampleId])
 
+  /** On mount */
   useEffect(() => {
-    // Trigger a fetch once
-    fetchPage()
+    getPage()
   }, [])
 
   const handleSetPage = (newPage: number) => {
-    fetchPage(newPage);
+    getPage(newPage);
   }
 
   const handleSetRowsPerPage = (newLimit: number) => {
-    fetchPage(page.index, newLimit)
+    getPage(page.index, newLimit)
   }
 
   const handleRefresh = async () => {
-    await fetchPage();
+    await getPage();
 
     if (sample !== null) {
-      fetchSample(sample.id);
+      getSample(sample.id);
     }
   }
 
   const handleCreateSample = () => {
-    setDialogOpen(true)
+    setDialogEditOpen(true);
   }
 
   function handleSampleChange(newValues: Sample): void {
@@ -59,7 +63,7 @@ export default function Home() {
   }
 
   function handleEdit(sample: Sample): void {
-    alert("Function not implemented.");
+    setDialogEditOpen(true)
   }
 
   function handleClose(): void {
@@ -103,9 +107,8 @@ export default function Home() {
         {/* Right side */}
         <Box className="flex flex-col gap-2 flex-1">
           <h1 className="text-lg underline">Selected Sample:</h1>
-          <SampleEditor
+          <SampleDetails
             sample={sample}
-            onChange={handleSampleChange}
             onEdit={handleEdit}
             onClose={handleClose}
           />
@@ -114,11 +117,17 @@ export default function Home() {
       <p hidden={status !== "loading"} className="text-grey-500">Loading...</p>
       <p hidden={status !== "error"} className="text-red-500" title={statusMessage} >Error: see console</p>
 
+      {/** Create Sample Dialog */}    
       <SampleDialog
-        open={dialogOpen}
-        setOpen={setDialogOpen}
-        title="Create a new Sample"
-        submit={handleCreate}
+        sample={null}
+        open={dialogCreateOpen}
+        setOpen={setDialogCreateOpen}
+      />
+      {/** Edit Sample Dialog */}  
+      <SampleDialog
+        sample={sample}
+        open={dialogEditOpen}
+        setOpen={setDialogEditOpen}
       />
     </Box>
   )

@@ -14,6 +14,7 @@
     "@mui/icons-material": "^5.15.5",
     "@mui/material": "^5.15.5",
     "axios": "^1.6.5",
+    "formik": "^2.4.5",
     "next": "14.0.4",
     "nuqs": "^1.15.3",
     "react": "^18",

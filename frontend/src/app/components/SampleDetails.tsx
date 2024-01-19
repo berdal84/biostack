@@ -3,16 +3,18 @@ import { Sample } from "@/app/types"
 import Button from "@/app/components/Button";
 
 type SampleEditorProps = {
+    /** The sample to show details from */
     sample: Sample | null;
-    onChange: (newValues: Sample) => void;
+    /** Triggered when user click on close button */
     onClose: () => void;
+    /** Triggered when user click on edit button */
     onEdit: (sample: Sample) => void;
 }
 
 /**
- * UI to visualize and edit a Sample.
+ * UI to visualize Sample details
  */
-export default function SampleEditor({ sample, onChange, onEdit, onClose }: SampleEditorProps) {
+export default function SampleDetails({ sample, onEdit, onClose }: SampleEditorProps) {
 
     if (sample === null) {
         return <Box>
