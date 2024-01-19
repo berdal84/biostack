@@ -28,14 +28,15 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 ## Road Map
 
 ### General
-- Permissions: add a user table and credentials on the API
-- Use multipart/form-data to upload a sample (name, type,..., and file! )
+- [ ] Add more fields on a sample detail (notes, tags, etc.)
+- [ ] Permissions: add a user table and credentials on the API
+- [ ] Use multipart/form-data to upload a sample (name, type,..., and file! )
 
 ### Frontend
-- Implement file upload on the UI
-- Highlight items in the light, so user can understand they are clickable.
-- Add small icon-buttons to edit/delete/view a sample (only visible when row is hovered)
+- [ ] Implement file upload on the UI
+- [x] Highlight items in the light, so user can understand they are clickable.
+- [ ] Add small icon-buttons to edit/delete/view a sample (only visible when row is hovered)
 
 ### Backend
-- Add postres and fastapi to the existing docker-compose.yml
-- User Github actions to run pytest with postgres (service)
+- [ ] Add postres and fastapi to the existing docker-compose.yml
+- [ ] User Github actions to run pytest with postgres (service)
