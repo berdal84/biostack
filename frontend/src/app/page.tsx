@@ -13,8 +13,7 @@ import {ConfirmationDialog} from "@/app/components/ConfirmationDialog";
 
 export default function Home() {
 
-  // Read url parameter "sample-id" to determine which sample to fetch
-  const [sampleId, setSampleId] = useQueryState('sample-id')
+  const [urlSampleId, setUrlSampleId] = useQueryState('sample-id')
   const { page, status, statusMessage, sample } = useAppContext()
   const dispatch = useAppDispatchContext();
   const api = useAPI()
@@ -22,19 +21,19 @@ export default function Home() {
   const [dialogCreateOpen, setDialogCreateOpen] = useState(false);
   const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
 
-  /** Update current sample when sampleId (url param) changes */
-  useEffect(() => {
-    if (sampleId) {
-      api.getSample(parseInt(sampleId, 10))
-    } else {
-      dispatch({ type: "setSample", payload: { sample: null } })
-    }
-  }, [sampleId])
-
   /** On mount */
   useEffect(() => {
     api.getPage()
+    // Load sample from sample-id URLParam
+    if (urlSampleId) {
+      api.getSample(parseInt(urlSampleId, 10))
+    }
   }, [])
+
+  /** Ensure sample-id URLParam is set to the current sample.id or null */
+  useEffect(() => {
+    setUrlSampleId(sample ? `${sample.id}`  : null)
+  }, [sample])
 
   const handleSetPage = (newPage: number) => {
     api.getPage(newPage);
@@ -56,12 +55,13 @@ export default function Home() {
     setDialogCreateOpen(true);
   }
 
-  function handleSampleChange(newValues: Sample): void {
-    alert("Function not implemented.");
+  function setCurrentSample(sample: Sample | null): void {
+    dispatch({ type: 'setSample', payload: { sample }})
   }
 
   function handleSampleClick(sample: Sample): void {
-    setSampleId(String(sample.id))
+    // Set current sample
+    setCurrentSample(sample);
   }
 
   function handleEdit(sample: Sample): void {
@@ -69,14 +69,14 @@ export default function Home() {
   }
 
   function handleClose(): void {
-    setSampleId(null)
+    setCurrentSample(null)
   }
 
   const handleDialogDeleteClose = useCallback( async (agree?: boolean) => {
     if ( agree && sample ) {
       // If user agreed, delete sample and refresh.
       await api.deleteSample(sample.id);
-      await setSampleId(null); // would give a 404 if we keep the current sample.id
+      await setUrlSampleId(null); // would give a 404 if we keep the current sample.id
       await handleRefresh()
     }
     setDialogDeleteOpen(false);
