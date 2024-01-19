@@ -1,15 +1,16 @@
 "use client"
-import { Box } from "@mui/material"
+import {Alert, Box} from "@mui/material"
 import Button from "@/app/components/Button"
 import Table from "@/app/components/Table"
 import { useAppContext, useAppDispatchContext } from "@/app/contexts/AppContext";
 import {useCallback, useEffect, useState} from "react";
 import { useAPI } from "@/app/utilities/useApi";
 import SampleDetails from "./components/SampleDetails";
-import { Sample, SampleCreate } from "@/app/types";
+import { Sample } from "@/app/types";
 import { useQueryState } from "nuqs";
 import SampleDialog from "./components/SampleDialog";
 import {ConfirmationDialog} from "@/app/components/ConfirmationDialog";
+import {Badge} from "@mui/base";
 
 export default function Home() {
 
@@ -126,8 +127,11 @@ export default function Home() {
           />
         </Box>
       </Box>
-      <p hidden={status !== "loading"} className="text-grey-500">Loading...</p>
-      <p hidden={status !== "error"} className="text-red-500" title={statusMessage} >Error: see console</p>
+
+      {/** Draft StatusBar (TODO: store the a date, hide message if old, except for errors) */}
+      <Alert severity="success" hidden={status !== "pending"} className="text-grey-500">Ready</Alert>
+      <Alert severity="info" hidden={status !== "loading"} className="text-grey-500">Loading...</Alert>
+      <Alert severity="error" hidden={status !== "error"} title={statusMessage} >Error: {statusMessage}</Alert>
 
       {/** Create Sample Dialog */}
       <SampleDialog
