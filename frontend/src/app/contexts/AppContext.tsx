@@ -2,7 +2,7 @@
 import { Dispatch, PropsWithChildren, createContext, useContext, useReducer } from 'react';
 import { Sample, Page } from '@/app/types';
 
-type Status = "loading" | "error" | "pending";
+export type Status = "loading" | "error" | "pending";
 
 /** The various action types to dispatch */
 type Action =

@@ -11,6 +11,7 @@ import { useQueryState } from "nuqs";
 import SampleDialog from "./components/SampleDialog";
 import {ConfirmationDialog} from "@/app/components/ConfirmationDialog";
 import {Badge} from "@mui/base";
+import StatusBar from "./components/StatusBar";
 
 export default function Home() {
 
@@ -129,10 +130,7 @@ export default function Home() {
         </Box>
       </Box>
 
-      {/** Draft StatusBar (TODO: store the a date, hide message if old, except for errors) */}
-      <Alert severity="success" hidden={status !== "pending"} className="text-grey-500">Ready</Alert>
-      <Alert severity="info" hidden={status !== "loading"} className="text-grey-500">Loading...</Alert>
-      <Alert severity="error" hidden={status !== "error"} title={statusMessage} >Error: {statusMessage}</Alert>
+      <StatusBar/>
 
       {/** Create Sample Dialog */}
       <SampleDialog
