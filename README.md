@@ -10,6 +10,16 @@ _Note: this project is an exercise_
 
 ## Quick Start
 
+There is two ways to start the apps, the first one rely on docker and docker-compose. The second uses bash scripts to run each service via commands.
+
+### Using Docker/Docker-Compose
+
+Prerequisites: docker and docker-compose 3.8+
+
+Run `docker-compose up`
+
+### Manually
+
 Prerequisites: a GNU/Linux Operating System, postgresql 14+, node 14+, python 3.12
 
 To install and run both front and back end, run the following commands:
@@ -19,8 +29,10 @@ To install and run both front and back end, run the following commands:
 ./run.sh
 ```
 
-Then, browse [localhost:3000](http://localhost:3000) to open the app.
-Or browse [localhost:8000/docs](http://localhost:8000/docs) to access backend documentation.
+### Use app
+
+Then, browse [127.0.0.1:3000](http://127.0.0.1:3000) to open the app.
+Or browse [127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access backend documentation.
 
 The front and back end are located in [`./frontend`](./frontend) and [`./backend`](./backend) folders respectively.
 For more information, read [backend's readme](./backend/README.md) and [frontend's readme](./frontend/README.md) go know more about it.
@@ -38,5 +50,5 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 - [ ] Add small icon-buttons to edit/delete/view a sample (only visible when row is hovered)
 
 ### Backend
-- [ ] Add postres and fastapi to the existing docker-compose.yml
+- [x] Add postres and fastapi to the existing docker-compose.yml
 - [ ] User Github actions to run pytest with postgres (service)
