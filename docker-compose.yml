@@ -18,10 +18,8 @@ services:
     container_name: api
     build:
       context: ./backend
-    command: uvicorn main:app --reload
     volumes:
-      - ./backend:/app
-    restart: always
+      - ./backend/src:/app/src
     environment:
       DB_NAME: postgres
       DB_USER: postgres

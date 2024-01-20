@@ -4,6 +4,7 @@
 FROM python:3.12.1
 
 # set work directory
+RUN mkdir /app
 WORKDIR /app
 
 # set env variables
@@ -16,3 +17,6 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
+
+# Run server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--reload"]
