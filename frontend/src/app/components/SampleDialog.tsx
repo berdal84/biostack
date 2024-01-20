@@ -19,6 +19,8 @@ type SampleDialogProps = {
     open: boolean;
     /** Setter to change modal state */
     setOpen: (open: boolean) => void;
+    /** triggered when sample is created or updated */
+    onChange: (sample: Sample) => void;
 }
 
 type FormType =
@@ -36,7 +38,7 @@ const DEFAULT_VALUES: FormType = {
 /**
  * Sample dialog to create or edit a sample.
  */
-export default function SampleDialog({ sample, open, setOpen }: SampleDialogProps) {
+export default function SampleDialog({ sample, open, setOpen, onChange }: SampleDialogProps) {
     const { createSample, updateSample } = useAPI()
     /** Check if sample is being edited, ensure at compile time sample is not undefined when return true */
     const isEditing = (sample: Sample|undefined): sample is Sample => {
@@ -73,6 +75,7 @@ export default function SampleDialog({ sample, open, setOpen }: SampleDialogProp
 
             if (result) {
                 setOpen(false)
+                onChange(result)
             } else {
                 alert(`Unable to ${sample ? "update" : "create"} sample, check console.`)
             }
