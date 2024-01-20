@@ -19,7 +19,7 @@ services:
     build:
       context: ./backend
     volumes:
-      - ./backend/src:/app/src
+      - ./backend/:/app/
     environment:
       DB_NAME: postgres
       DB_USER: postgres
@@ -32,16 +32,7 @@ services:
   
   frontend:
     container_name: frontend
-    build:
-      context: ./frontend
-      target: dev
-    command: yarn dev
+    build: ./frontend
     restart: always
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     ports:
       - 3000:3000
