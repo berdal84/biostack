@@ -16,7 +16,7 @@ const api = axios.create({
  * Hook wrapping several callbacks to interact with Biostack's API while updating the AppContext
  */
 export function useAPI() {
-    const state = useAppContext();
+    const { page } = useAppContext();
     const dispatch = useAppDispatchContext();
 
     /**
@@ -35,8 +35,8 @@ export function useAPI() {
      * @param limit the page item limit (default is current page.limit)
      */
     const getPage = useCallback(async (
-        index: number = state.page.index,
-        limit: number = state.page.limit
+        index: number,
+        limit: number = page.limit
     ) => {
         dispatch({ type: 'setStatus', payload: { status: 'loading' } })
         try {
@@ -48,7 +48,7 @@ export function useAPI() {
         } catch (error: any) {
             return handleError(error)
         }
-    }, [state, dispatch, handleError])
+    }, [page, dispatch, handleError])
 
     /**
      * Get a sample from a given id.
@@ -108,12 +108,16 @@ export function useAPI() {
         }
     };
 
+    /** Refresh the current page */
+    const refreshPage = async () => getPage(page.index)
+
     return {
         getPage,
         getSample,
         createSample,
         updateSample,
         deleteSample,
+        refreshPage,
     }
 }
 

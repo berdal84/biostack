@@ -25,7 +25,7 @@ export default function Home() {
 
   /** On mount */
   useEffect(() => {
-    api.getPage()
+    api.getPage(0)
     // Load sample from sample-id URLParam
     if (urlSampleId) {
       api.getSample(parseInt(urlSampleId, 10))
@@ -46,7 +46,7 @@ export default function Home() {
   }
 
   const handleRefresh = async () => {
-    await api.getPage();
+    await api.refreshPage();
 
     if (sample !== null) {
       api.getSample(sample.id);
@@ -74,6 +74,10 @@ export default function Home() {
     setCurrentSample(null)
   }
 
+  function handleSampleChange(): void {
+    api.refreshPage()
+  }
+
   /**
    * Handle onClose event from Delete Dialog
    */
@@ -82,7 +86,7 @@ export default function Home() {
       // If user agreed, delete sample and refresh.
       await api.deleteSample(sample.id);
       await setUrlSampleId(null); // would give a 404 if we keep the current sample.id
-      await api.getPage(); // Refresh page
+      await api.refreshPage();
     }
     setDialogDeleteOpen(false);
   }, [api, sample])
@@ -136,12 +140,14 @@ export default function Home() {
       <SampleDialog
         open={dialogCreateOpen}
         setOpen={setDialogCreateOpen}
+        onChange={handleSampleChange}
       />
       {/** Edit Sample Dialog */}
       {sample && <SampleDialog
         sample={sample}
         open={dialogEditOpen}
         setOpen={setDialogEditOpen}
+        onChange={handleSampleChange}
       />}
       {/** Delete Sample Dialog */}
       {sample && <ConfirmationDialog
