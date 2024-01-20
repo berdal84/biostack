@@ -12,13 +12,14 @@ _Note: this project is an exercise_
 
 There is two ways to start the apps, the first one rely on docker and docker-compose. The second uses bash scripts to run each service via commands.
 
-### Using Docker/Docker-Compose
+### Install and Run
+#### Using Docker/Docker-Compose
 
 Prerequisites: docker and docker-compose 3.8+
 
 Run `docker-compose up`
 
-### Manually
+#### Manually
 
 Prerequisites: a GNU/Linux Operating System, postgresql 14+, node 14+, python 3.12
 
@@ -29,7 +30,7 @@ To install and run both front and back end, run the following commands:
 ./run.sh
 ```
 
-### Use app
+### Launch
 
 Then, browse [127.0.0.1:3000](http://127.0.0.1:3000) to open the app.
 Or browse [127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access backend documentation.
