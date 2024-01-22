@@ -135,7 +135,7 @@ export function useAPI() {
                     }
                 }
             )
-            console.debug(`uploadFile response is:`, response)
+            dispatch({ type: 'setSample', payload: { sample: response.data } })
             return response.data;
         } catch (error: any) {
             return handleError(error)
