@@ -78,7 +78,7 @@ async def delete_sample(sample_id: int, db: Session = Depends(get_session)):
     return { "detail": "Sample {} deleted".format(sample_id) }
 
 @router.post("/{sample_id}/upload", description="Upload a file to associate it to an existing sample.")
-async def upload(sample_id: int, file: UploadFile | None, db: Session = Depends(get_session)) -> schemas.Sample:
+async def upload(sample_id: int, file: UploadFile, db: Session = Depends(get_session)) -> schemas.Sample:
     
     # Try to get the existing sample first
     db_sample = sample_crud.get_sample_by_id(db, sample_id)
