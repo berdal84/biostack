@@ -1,6 +1,7 @@
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { Sample } from "@/app/types"
 import Button from "@/app/components/Button";
+import { ArrowBackSharp, Close, Delete, Edit } from "@mui/icons-material";
 
 type SampleEditorProps = {
     /** The sample to show details from */
@@ -19,8 +20,9 @@ type SampleEditorProps = {
 export default function SampleDetails({ sample, onEdit, onClose, onDelete }: SampleEditorProps) {
 
     if (sample === null) {
-        return <Box>
-            Select a sample to see details
+        return <Box className="italic text-sm flex flex-col gap-4 group h-full">
+            <p>No sample selected.</p>
+            <p className="duration-300 opacity-0 group-hover:opacity-100"><ArrowBackSharp />Click on a sample from the list to see details.</p >
         </Box>
     }
 
@@ -39,13 +41,15 @@ export default function SampleDetails({ sample, onEdit, onClose, onDelete }: Sam
     }
 
     return (
-        <Box className="border p-5">
-            <Box className="flex gap-2 justify-items-end mb-5">
-                <Button onClick={() => handleDelete()}>Delete</Button>
-                <Button onClick={() => handleEdit()}>Edit</Button>
-                <Button onClick={() => handleClose()}>Close</Button>
+        <Box className="border ">
+            <Box className="flex gap-1 justify-end bg-black/10 p-0.5">
+                <Button onClick={() => handleEdit()} title="Edit"><Edit /></Button>
+                <Button onClick={() => handleDelete()} title="Delete"><Delete/></Button>                
+                <div className="flex-auto"></div>
+                <Button className="ml-50px" onClick={() => handleClose()} title="Close"><Close /></Button>
             </Box>
-            <Box>
+            <Divider />
+            <Box className="p-3">
                 <table className="table-auto">
                     <tbody >
                         <tr>
@@ -71,8 +75,7 @@ export default function SampleDetails({ sample, onEdit, onClose, onDelete }: Sam
                                     // TODO: would be better to include the url in API's response
                                     href={`http://localhost:8000/sample/${id}/download`}
                                     className="underline"
-                                    target="_blank"
-                                    title="Download or Open file in a tab"
+                                    title="Download File"
                                 >
                                     {file_name}
                                 </a>
