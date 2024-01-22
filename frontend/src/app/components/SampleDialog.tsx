@@ -10,7 +10,9 @@ import Button from '@/app/components/Button';
 import { Sample, SampleCreate, SampleUpdate } from '@/app/types';
 import { useAPI } from '../utilities/useApi';
 import { useFormik } from 'formik';
-import {useEffect} from "react";
+import InputFileUpload from './InputFileUpload';
+import { Alert, Box } from '@mui/material';
+import { ChangeEvent } from 'react';
 
 type SampleDialogProps = {
     /** The sample to edit, or undefined to create a new sample */
@@ -25,7 +27,10 @@ type SampleDialogProps = {
 
 type FormType =
     Omit<Sample, 'id'>
-    & { new_file?: File }
+    & {
+        /** A new file to upload */
+        new_file: File | undefined;
+    }
 
 const DEFAULT_VALUES: FormType = {
     name: "",
@@ -39,7 +44,7 @@ const DEFAULT_VALUES: FormType = {
  * Sample dialog to create or edit a sample.
  */
 export default function SampleDialog({ sample, open, setOpen, onChange }: SampleDialogProps) {
-    const { createSample, updateSample } = useAPI()
+    const { createSample, updateSample, uploadFile } = useAPI()
     /** Check if sample is being edited, ensure at compile time sample is not undefined when return true */
     const isEditing = (sample: Sample|undefined): sample is Sample => {
         return sample?.id !== undefined;
@@ -49,6 +54,7 @@ export default function SampleDialog({ sample, open, setOpen, onChange }: Sample
 
     /** Uses formik to handle form state and actions */
     const formik = useFormik<FormType>({
+        enableReinitialize: true,
         initialValues: {
             ...DEFAULT_VALUES,
             ...sample
@@ -59,12 +65,15 @@ export default function SampleDialog({ sample, open, setOpen, onChange }: Sample
             // API request
             try {
                 if (isEditing(sample)) {
+
                     // Update sample data
                     result = await updateSample(sample.id, values as SampleUpdate);
-                    // TODO: update sample file
+                    
+                    // Update file
                     if ( values.new_file ) {
-                        alert("Uploading a new file is not implemented yet")
+                        result = await uploadFile(sample.id, values.new_file);
                     }
+
                 } else {
                     result = await createSample(values as SampleCreate);
                 }
@@ -77,6 +86,7 @@ export default function SampleDialog({ sample, open, setOpen, onChange }: Sample
                 setOpen(false)
                 onChange(result)
             } else {
+                // We should never get there, since there is a "handleError" in useAPI, but just for development, it is useful.
                 alert(`Unable to ${sample ? "update" : "create"} sample, check console.`)
             }
         },
@@ -86,6 +96,11 @@ export default function SampleDialog({ sample, open, setOpen, onChange }: Sample
         setOpen(false);
         formik.resetForm();
     };
+
+    function handleFileUploadChange(event: ChangeEvent<HTMLInputElement>): void {
+        const file = event.target.files?.[0];
+        formik.setFieldValue('new_file', file); // undefined will clear the field
+    }
 
     return (
         <Dialog
@@ -97,7 +112,7 @@ export default function SampleDialog({ sample, open, setOpen, onChange }: Sample
             }}
         >
             <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
+            <DialogContent className="flex flex-col gap-3">
                 <DialogContentText>
                     <span>Please provide information about your sample and press {submitButtonLabel}</span>
                 </DialogContentText>
@@ -135,28 +150,32 @@ export default function SampleDialog({ sample, open, setOpen, onChange }: Sample
                     value={formik.values.date}
                     onChange={formik.handleChange}
                 />
-                {isEditing(sample) && <>
-                    <TextField
-                        margin="dense"
-                        name="file_name"
+                {isEditing(sample)
+                    && <Box className="flex items-center">
+                        <TextField
+                        label="File Name"
                         type="text"
-                        label="File"
-                        variant="standard"
-                        value={formik.values.file_name ?? ""}
-                        onChange={formik.handleChange}
-                    />
-                    {/* TODO: improve form to understand that this field is to override existing file or do a first upload */}
-                    <TextField
+                        name="file_name"
                         margin="dense"
-                        name="file"
-                        type="file"
-                        label="Upload New File"                    
+                        InputLabelProps={{ disabled: true, shrink: true }}
                         variant="standard"
-                        value={formik.values.new_file}
-                        onChange={formik.handleChange}
+                        value={formik.values.new_file?.name ?? formik.values.file_name}
                     />
-                </>}
-                { !isEditing(sample) && <span className="text-xs italic">WIP: you will be able to attach a file to your sample once it created.</span>}
+                    <InputFileUpload
+                        label="Upload"
+                        name="new_file"
+                        onChange={handleFileUploadChange}
+                        title={formik.values.file_name ? `New Upload (${formik.values.file_name} will be lost)` : "Upload"}
+                        />
+                    </Box>}
+                
+                {formik.values.new_file && formik.values.file_name &&
+                    <Alert severity="info">
+                        {formik.values.file_name} will be deleted, and {formik.values.new_file.name} will replace it.
+                    </Alert>}   
+                {!isEditing(sample) && <Alert severity="info">
+                    WIP: you will be able to attach a file to your sample once it created.
+                </Alert>}
 
             </DialogContent>
             <DialogActions>
