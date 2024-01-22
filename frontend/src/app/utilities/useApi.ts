@@ -10,6 +10,9 @@ import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
 const api = axios.create({
     baseURL: 'http://localhost:8000/sample', // TODO: read from env vars
     timeout: 3000,
+    headers: {
+        'Accept': 'application/json',
+    }
 });
 
 /**
@@ -108,6 +111,37 @@ export function useAPI() {
         }
     };
 
+    /**
+     * Upload a file to an existing sample
+     * @param id The id of the sample to attach the file on
+     * @param file The file to attach. 
+     * @returns The updated sample
+     * 
+     * TODO: merge this with update?
+     *       I started with an independent upload, to be able to handle various locations in the future.
+     *       For example, files might be stored into an S3 or any other storage system.
+     */
+    const uploadFile = async (id: Sample['id'], file: File) =>  {
+        try {
+            const form = new FormData();
+            form.append('file', file, file.name);
+            
+            const response: AxiosResponse<Sample> = await api.post(
+                `/${id}/upload`,
+                form,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            )
+            console.debug(`uploadFile response is:`, response)
+            return response.data;
+        } catch (error: any) {
+            return handleError(error)
+        }
+    }
+
     /** Refresh the current page */
     const refreshPage = async () => getPage(page.index)
 
@@ -118,6 +152,7 @@ export function useAPI() {
         updateSample,
         deleteSample,
         refreshPage,
+        uploadFile,
     }
 }
 
