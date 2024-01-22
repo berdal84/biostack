@@ -10,7 +10,6 @@ import { Sample } from "@/app/types";
 import { useQueryState } from "nuqs";
 import SampleDialog from "./components/SampleDialog";
 import {ConfirmationDialog} from "@/app/components/ConfirmationDialog";
-import {Badge} from "@mui/base";
 import StatusBar from "./components/StatusBar";
 
 export default function Home() {
