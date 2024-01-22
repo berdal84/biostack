@@ -46,7 +46,7 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 - [ ] Use multipart/form-data to upload a sample (name, type,..., and file! )
 
 ### Frontend
-- [ ] Implement file upload on the UI
+- [x] Implement file upload on the UI
 - [x] Highlight items in the light, so user can understand they are clickable.
 - [ ] Add small icon-buttons to edit/delete/view a sample (only visible when row is hovered)
 
