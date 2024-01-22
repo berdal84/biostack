@@ -2,6 +2,7 @@ from genericpath import isfile
 from mimetypes import guess_type
 import os
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+from fastapi.responses import FileResponse
 from src.schemas.page import Page
 from src.utilities.format import formatSampleFileName, getSampleFilePath
 from src.database.session import get_session, Session
@@ -113,11 +114,8 @@ async def download(sample_id: int, db: Session = Depends(get_session)):
     if db_sample is None:
         return Response(status_code=404)
     
-    # Locate the file, read its content and return it
-    filename = getSampleFilePath(db_sample.file_name)
-    if not isfile(filename):
-        return Response(status_code=404)
-    with open(filename) as f:
-        content = f.read()
-    media_type, _ = guess_type(filename)
-    return Response(content, media_type=media_type)
+    # Get file path and return a response as octet-stream to avoid the file to be displayed in the browser
+    return FileResponse(
+        path= getSampleFilePath(db_sample.file_name),
+        media_type='application/octet-stream',
+        filename=db_sample.file_name)
