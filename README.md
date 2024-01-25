@@ -1,6 +1,8 @@
 
 [![Frontend CI](https://github.com/berdal84/biostack/actions/workflows/node.js.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/node.js.yml)
 
+[![Backend CI](https://github.com/berdal84/biostack/actions/workflows/python.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/python.yml)
+
 # Biostack
 
 This project is a client/server to manage Biotech Data. It is implemented using FastAPI and NextJS, with a Postgres database.
@@ -53,5 +55,5 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 
 ### Backend
 - [x] Add postres and fastapi to the existing docker-compose.yml
-- [ ] Use Github Actions's services to run pytest with postgres
+- [x] Use Github Actions's services to run pytest with postgres
 - [ ] Setup Alembic to handle DB upgrades

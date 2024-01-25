@@ -1,0 +1,60 @@
+name: Backend CI
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - .github/workflows/python.yml
+      - backend/**
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - .github/workflows/python.yml
+      - backend/**
+
+jobs:
+  test:
+    # You must use a Linux environment when using service containers or container jobs
+    runs-on: ubuntu-latest
+    
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+    steps:
+        - uses: actions/checkout@v4
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.12'
+        - name: Install dependencies
+          run: |
+            cd backend
+            python -m pip install --upgrade pip
+            pip install -r requirements_dev.txt
+        - name: Test with pytest
+          run: | 
+            cd backend
+            pytest
+          env:
+            DB_HOST: localhost:5432
+            DB_NAME: postgres
+            DB_USER: postgres
+            DB_PASSWORD: postgres

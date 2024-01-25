@@ -1,3 +1,5 @@
+[![Backend CI](https://github.com/berdal84/biostack/actions/workflows/python.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/python.yml)
+
 
 # BioStack's Backend
 
