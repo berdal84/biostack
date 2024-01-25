@@ -4,6 +4,8 @@
 
 # Biostack
 
+<img src="https://github.com/berdal84/biostack/blob/main/frontend/public/biostack-logo.svg" height="128" />
+
 This project is a client/server to manage Biotech Data. It is implemented using FastAPI and NextJS, with a Postgres database.
 Code is written in Python and TypeScript.
 
