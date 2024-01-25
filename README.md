@@ -1,6 +1,5 @@
 
 [![Frontend CI](https://github.com/berdal84/biostack/actions/workflows/node.js.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/node.js.yml)
-
 [![Backend CI](https://github.com/berdal84/biostack/actions/workflows/python.yml/badge.svg)](https://github.com/berdal84/biostack/actions/workflows/python.yml)
 
 # Biostack
