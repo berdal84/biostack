@@ -36,7 +36,7 @@ Then, browse [127.0.0.1:3000](http://127.0.0.1:3000) to open the app.
 Or browse [127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access backend documentation.
 
 The front and back end are located in [`./frontend`](./frontend) and [`./backend`](./backend) folders respectively.
-For more information, read [backend's readme](./backend/README.md) and [frontend's readme](./frontend/README.md) go know more about it.
+For more information, read [backend's readme](./backend/README.md) and [frontend's readme](./frontend/README.md).
 
 ## Road Map
 
@@ -52,4 +52,4 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 
 ### Backend
 - [x] Add postres and fastapi to the existing docker-compose.yml
-- [ ] User Github actions to run pytest with postgres (service)
+- [ ] Use Github Actions's services to run pytest with postgres
