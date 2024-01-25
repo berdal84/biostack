@@ -44,6 +44,7 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 - [ ] Add more fields on a sample detail (notes, tags, etc.)
 - [ ] Permissions: add a user table and credentials on the API
 - [ ] Use multipart/form-data to upload a sample (name, type,..., and file! )
+- [ ] Allow to upload file using third party services (S3, google drive, etc)
 
 ### Frontend
 - [x] Implement file upload on the UI
