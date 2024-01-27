@@ -73,7 +73,7 @@ export default function SampleDetails({ sample, onEdit, onClose, onDelete }: Sam
                             <td>{file_name ?
                                 <a
                                     // TODO: would be better to include the url in API's response
-                                    href={`http://localhost:8000/sample/${id}/download`}
+                                    href={`${process.env.API_BASE_URL}/sample/${id}/download`}
                                     className="underline"
                                     title="Download File"
                                 >

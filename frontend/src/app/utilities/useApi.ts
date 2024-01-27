@@ -3,14 +3,13 @@ import { useCallback } from "react";
 import { useAppContext, useAppDispatchContext } from "../contexts/AppContext";
 import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
 
-
 /**
  * Create a new AXIOS instance to query the API
  * See https://www.npmjs.com/package/axios
 */
 const api = axios.create({
-    baseURL: `${process.env.BIOSTACK_API_HOST ?? 'http://localhost'}/sample`,
-    timeout: 3000,
+    baseURL: `${process.env.API_BASE_URL}/sample`,
+    timeout: 5000,
     headers: {
         'Accept': 'application/json',
     }

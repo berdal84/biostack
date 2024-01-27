@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+
+  # This file is supposed to be used in addition to the base docker-compose.yml
+  # ex:
+  #     docker compose --file docker-compose.base.yml --file docker-compose.prod.yml up
+  
+  database:
+    ports:
+      - target: 5432  
+      #  published:  # NOT publicly accessible
+  
+  api:
+    ports:
+      - target: 8000
+        published: 8000
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - API_BASE_URL=http://54.36.191.123:8000
+    ports:
+      - target: 3000
+        published: 80 # Public
+

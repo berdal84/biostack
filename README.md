@@ -20,7 +20,7 @@ There is two ways to start the apps, the first one rely on docker and docker-com
 
 Prerequisites: docker and docker-compose 3.8+
 
-Run `docker-compose up`
+Run `docker compose --file docker-compose.base.yml --file docker-compose.dev.yml up`
 
 #### Manually
 

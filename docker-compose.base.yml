@@ -11,6 +11,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+    networks:
+      - backend
 
   #=== API ===#
 
@@ -25,14 +27,29 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_HOST: postgres
-    ports:
-      - 8000:8000
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - backend
+      - frontend
 
   #=== Frontend ===#
   
   frontend:
     container_name: frontend
-    build: ./frontend
+    build:
+      context: ./frontend
     restart: always
-    ports:
-      - 3000:3000
+    depends_on:
+      - api
+    networks:
+      - frontend
+
+#=== Networks ===#
+
+networks:
+  frontend:
+    name: frontend_network
+  backend:
+    name: backend_network
