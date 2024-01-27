@@ -3,16 +3,13 @@ import { useCallback } from "react";
 import { useAppContext, useAppDispatchContext } from "../contexts/AppContext";
 import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
 
-// Declare a var to load environment variables non inlined
-// (note: vars needs to start with NEXT_PUBLIC_ to be available in browser context at runtime)
-const env = process.env
 
 /**
  * Create a new AXIOS instance to query the API
  * See https://www.npmjs.com/package/axios
 */
 const api = axios.create({
-    baseURL: `${env.NEXT_PUBLIC_BIOSTACK_API_HOST ?? 'http://localhost'}/sample`,
+    baseURL: `${process.env.NEXT_PUBLIC_BIOSTACK_API_HOST ?? 'http://localhost'}/sample`,
     timeout: 3000,
     headers: {
         'Accept': 'application/json',
