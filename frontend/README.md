@@ -29,6 +29,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Deployment
 
+### Using Docker
+
 Prerequisites:
 - docker 3.8+ & docker-compose installed
 
@@ -37,3 +39,17 @@ Run the following command to build and deploy localy
 ```
 docker compose -f "docker-compose.prod.yml" up -d --build
 ```
+
+### Manual
+
+Define a `.env.production` file to declare `BIOSTACK_API_HOST` this way:
+
+```
+NEXT_PUBLIC_BIOSTACK_API_HOST=<your-public-url>
+```
+
+By default, this var will fallback to `http://localhost`
+
+
+WIP
+
