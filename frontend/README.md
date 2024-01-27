@@ -45,7 +45,7 @@ docker compose -f "docker-compose.prod.yml" up -d --build
 Define a `.env.production` file to declare `BIOSTACK_API_HOST` this way:
 
 ```
-NEXT_PUBLIC_BIOSTACK_API_HOST=<your-public-url>
+BIOSTACK_API_HOST=<your-public-url>
 ```
 
 By default, this var will fallback to `http://localhost`

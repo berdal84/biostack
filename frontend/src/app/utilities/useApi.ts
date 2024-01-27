@@ -9,7 +9,7 @@ import { Page, Sample, SampleCreate, SampleUpdate } from "@/app/types";
  * See https://www.npmjs.com/package/axios
 */
 const api = axios.create({
-    baseURL: `${process.env.NEXT_PUBLIC_BIOSTACK_API_HOST ?? 'http://localhost'}/sample`,
+    baseURL: `${process.env.BIOSTACK_API_HOST ?? 'http://localhost'}/sample`,
     timeout: 3000,
     headers: {
         'Accept': 'application/json',
