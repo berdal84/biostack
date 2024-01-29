@@ -4,24 +4,8 @@ services:
   # This file is supposed to be used in addition to the base docker-compose.yml
   # ex:
   #     docker compose --file docker-compose.base.yml --file docker-compose.dev.yml up
-  
-  database:
+ 
+  reverse-proxy:
     ports:
-      - 5432
-  
-  api:
-    ports:
-      - 8000
-
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        - API_BASE_URL=http://0.0.0.0/api
-    ports:
-      - 3000
-
-  proxy:
-    ports:
-      - 80:80
-      - 443:443
+      - 3000:80   # Preserve default Nextjs port
+      - 8000:8000 # Preserve default FastAPI port
