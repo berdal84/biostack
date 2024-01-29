@@ -46,6 +46,26 @@ services:
     networks:
       - frontend
 
+     #=== Frontend ===#
+  
+  proxy:
+    image: nginx
+    restart: always
+    volumes:
+      - type: bind
+        source: ./proxy/conf/nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+      - type: bind
+        source: ./proxy/html/index.html
+        target: /etc/nginx/html/index.html
+        read_only: true
+    depends_on:
+      - api
+      - frontend
+    networks:
+      - frontend   
+
 #=== Networks ===#
 
 networks:

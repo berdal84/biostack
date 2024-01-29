@@ -7,20 +7,21 @@ services:
   
   database:
     ports:
-      - target: 5432  
-        # published: 5432 # Not required
+      - 5432
   
   api:
     ports:
-      - target: 8000
-        published: 8000
+      - 8000
 
   frontend:
     build:
       context: ./frontend
       args:
-        - API_BASE_URL=http://0.0.0.0:8000
+        - API_BASE_URL=http://0.0.0.0/api
     ports:
-      - target: 3000
-        published: 3000 # Public
+      - 3000
 
+  proxy:
+    ports:
+      - 80:80
+      - 443:443
