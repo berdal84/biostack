@@ -1,7 +1,7 @@
 version: "3.8"
 services:
 
-  # This file is supposed to be used in addition to the base docker-compose.yml
+  # This file must be used in addition to docker-compose.base.yml
   # ex:
   #     docker compose --file docker-compose.base.yml --file docker-compose.dev.yml up
  
@@ -9,4 +9,3 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8000:8000 # Preserve default FastAPI port

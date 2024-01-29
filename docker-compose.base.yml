@@ -61,22 +61,10 @@ services:
     image: nginx
     restart: always
     volumes:
-      - type: bind
-        source: ./reverse-proxy/nginx.conf
-        target: /etc/nginx/conf.d/default.conf
-        read_only: true
-      - type: bind
-        source: ./reverse-proxy/index.html
-        target: /etc/nginx/html/index.html
-        read_only: true
-      - type: bind
-        source: ./reverse-proxy/ssl.crt
-        target: /usr/local/nginx/conf/ssl.crt;
-        read_only: true
-      - type: bind
-        source: ./reverse-proxy/ssl.key
-        target: /usr/local/nginx/conf/ssl.key;
-        read_only: true
+      - ./reverse-proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./reverse-proxy/index.html:/etc/nginx/html/index.html:ro
+      - ./reverse-proxy/ssl.crt:/etc/nginx/ssl.crt:ro
+      - ./reverse-proxy/ssl.key:/etc/nginx/ssl.key:ro
     depends_on:
       - api
       - frontend
