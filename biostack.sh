@@ -6,7 +6,7 @@
 function help() {
 
   echo "=--------------------------==--------------------------="
-  echo "usage: biostack.sh <command>"
+  echo "usage: biostack.sh <command> [--prod]"
   echo ""
   echo "Available commands:"
   echo "  help*, install, uninstall, restart, start, status, stop. (*:default)"
@@ -22,9 +22,7 @@ then
   help
   echo "[ERROR]: Illegal argument count!"
 else  
-  # Define common docker compose arguments
-  docker_files="-f base.yml -f dev.yml"
-
+ 
   # Map biostack's commands with docker-compose commands
   # PRE command
   case $1 in
@@ -41,26 +39,53 @@ else
                   exit 1;
   esac
 
-  docker compose $docker_files $docker_command ${@:2} ||
+  # prod or dev ?
+  case $2 in      
+      "--prod") prod=1;;
+      "--dev")  prod=0;;
+  esac
+
+  if [[ prod -eq 1 ]]
+  then
+    docker_files="-f base.yml -f prod.yml"
+    protocol="https"
+  else
+    docker_files="-f base.yml -f dev.yml"
+    protocol="http"
+  fi
+
+  docker compose $docker_files $docker_command ||
     ( echo "[ERROR] Something went wrong with docker compose!" && exit 1)
+
 
   # POST command
   case $1 in
     "start")
       echo "BioStack is now running in background. Run '$0 stop' to stop."
-      echo "API documentation: http://localhost:8000/docs"
-      echo "                   http://localhost:8000/redoc"
-      echo "Frontend:          https://localhost <----------- Start Here"
+      echo "API documentation: ${protocol}://localhost:8000/docs"
+      echo "                   ${protocol}://localhost:8000/redoc"
+      echo "Frontend:          ${protocol}://localhost <----------- Start Here"
+
+      if [[ prod -eq 0 ]]
+      then
+        echo "[DEV MODE ON]"
+      fi
+
       ;;
     "install")
       echo "BioStack docker images are now built."
-      echo ""
-      echo "You have now to setup the ssl certificates in order to have a secured webserver."
-      echo "Be sure this server has port 80 available, and run 'sudo certbot certonly'"
-      echo "Follow the instructions, and then copy the generated certificate to ./reverse-proxy/ssl.crt"
-      echo "and the key to ./reverse-proxy/ssl.key"
-      echo ""
-      echo "Once done, BioStack is ready to start. Run '$0 start' to run the dockers (detached mode)."
+      
+      if [[ prod -eq 1 ]]
+      then
+        echo ""
+        echo "You have now to setup the ssl certificates in order to have a secured webserver."
+        echo "Be sure this server has port 80 available, and run 'sudo certbot certonly'"
+        echo "Follow the instructions, and then copy the generated certificate to ./reverse-proxy/ssl.crt"
+        echo "and the key to ./reverse-proxy/ssl.key"
+        echo ""
+        echo "Once done, BioStack is ready to start."
+      fi
+      echo "Run '$0 start' to start the dockers in detached mode."
   esac
 fi
 
