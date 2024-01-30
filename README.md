@@ -20,12 +20,12 @@ To install and start the app, we rely on a bash script and docker compose.
 Prerequisites:
 - docker and docker-compose must be installed
 
-Run `./biostask.sh install` an follow the instructions.
+Run `./biostask.sh install` and follow the instructions.
 
 
 ### Start
 
-Run `./biostask.sh start` an follow the instructions.
+Run `./biostask.sh start` and follow the instructions.
 
 
 ## Road Map
