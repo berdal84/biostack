@@ -1,14 +1,16 @@
-from genericpath import isfile
-from mimetypes import guess_type
 import os
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+import shutil
+from tempfile import NamedTemporaryFile
+from typing import IO
+from fastapi import APIRouter, Depends, HTTPException, Header, Response, UploadFile
 from fastapi.responses import FileResponse
 from src.schemas.page import Page
 from src.utilities.format import formatSampleFileName, getSampleFilePath
 from src.database.session import get_session, Session
 from src import schemas
 from src.database import sample_crud
-        
+from starlette import status 
+
 router = APIRouter(
     prefix="/sample",
     tags=["sample"],
@@ -78,29 +80,41 @@ async def delete_sample(sample_id: int, db: Session = Depends(get_session)):
     
     return { "detail": "Sample {} deleted".format(sample_id) }
 
+
 @router.post("/{sample_id}/upload", description="Upload a file to associate it to an existing sample.")
-async def upload(sample_id: int, file: UploadFile, db: Session = Depends(get_session)) -> schemas.Sample:
+async def upload(sample_id: int,
+                 file: UploadFile,
+                 db: Session = Depends(get_session),
+                 content_length: int = Header(..., lt=1_000_000)) -> schemas.Sample:
     
     # Try to get the existing sample first
     db_sample = sample_crud.get_sample_by_id(db, sample_id)
     if not db_sample:
-        raise HTTPException(404)
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
 
-    # Delete any existing file related to this sample
-    # TODO: handle when user upload a new file to a sample having already a file attached
-    #       Easy solution would be to delete the old file.
-    #       Safer would be to ask user to delete explicitly.
-    #       Choice may depends if we allow multiple files per sample.
-    if db_sample.file_name is not None:
-        os.remove(getSampleFilePath(db_sample.file_name))
-
-    # Then, store the uploaded file
-    # TODO: create a file dedicated module?
     if not file:
-        return HTTPException(422, "No upload file sent")
+        return HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "No upload file sent")
+    
+    # Delete any existing file related to this sample
+    if db_sample.file_name is not None:
+        path = getSampleFilePath(db_sample.file_name)
+        if os.path.isfile(path):
+            os.remove(path)
+
+    # Load the payload chunk by chunk, to avoid loading a too large file
+    # Adapted from https://github.com/tiangolo/fastapi/issues/362#issuecomment-584104025
+    real_file_size = 0
+    temp: IO = NamedTemporaryFile(delete=False)
+    for chunk in file.file:
+        real_file_size += len(chunk)
+        if real_file_size > content_length:
+            raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Too large")
+        temp.write(chunk)
+    temp.close()
+
+    # Move the temp file to a proper location
     file_name = formatSampleFileName(sample_id, file.filename)
-    fd = open( getSampleFilePath(file_name), "wb+")
-    fd.write(file.file.read())
+    shutil.move(temp.name, getSampleFilePath(file_name))
 
     # ...And update the path    
     db_sample = sample_crud.update_sample(db, sample_id, file_name=file_name) # store only the filename, path will be retrieved knowing the sample_id anyways.     

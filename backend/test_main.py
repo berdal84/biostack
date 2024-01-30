@@ -4,6 +4,8 @@ from fastapi.testclient import TestClient
 from src.schemas.page import Page
 from src.schemas import SampleCreate, SampleUpdate, Sample
 from main import app
+from starlette import status
+
 
 """
 Single test file to run agains the sample API.
@@ -66,7 +68,7 @@ def test_sample_file_upload():
         url="/sample/{}/upload".format(sample_id),
         files={"file": ("test-file.txt", test_file, "text/plain")} 
         )
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     new_sample = Sample.model_validate(response.json())
     assert new_sample.id is sample_id
     assert new_sample.file_name.endswith("test-file.txt")
@@ -76,9 +78,28 @@ def test_sample_file_upload():
         url="/sample/{}/upload".format(sample_id),
         files={"file": ("test-file-override.txt", test_file, "text/plain")} 
         )
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     new_sample = Sample.model_validate(response.json())
     assert new_sample.file_name.endswith("test-file-override.txt")
+
+def test_sample_file_upload_NO_FILE():
+    global sample_id
+    # First upload
+    response = client.post(
+        url="/sample/{}/upload".format(sample_id)
+        )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+def test_sample_file_upload_TOO_LARGE():
+    global sample_id
+    test_file = open("./data/file-for-test-TOO-LARGE.txt", "rb")
+    # First upload
+    response = client.post(
+        url="/sample/{}/upload".format(sample_id),
+        files={"file": (test_file.name, test_file, "text/plain")} 
+        )
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
 
 def test_sample_file_download():
     global sample_id
