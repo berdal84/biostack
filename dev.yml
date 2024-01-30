@@ -10,5 +10,4 @@ services:
       - ./reverse-proxy/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - 80:80
-      - 443:443
       - 8000:8000 # Preserve default FastAPI port

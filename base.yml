@@ -62,8 +62,6 @@ services:
     restart: always
     volumes:
       - ./reverse-proxy/index.html:/etc/nginx/html/index.html:ro
-      - ./reverse-proxy/ssl.crt:/etc/nginx/ssl.crt:ro
-      - ./reverse-proxy/ssl.key:/etc/nginx/ssl.key:ro
     depends_on:
       - api
       - frontend
