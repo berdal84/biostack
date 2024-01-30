@@ -13,33 +13,20 @@ _Note: this project is an exercise_
 
 ## Quick Start
 
-There is two ways to start the apps, the first one rely on docker and docker-compose. The second uses bash scripts to run each service via commands.
+To install and start the app, we rely on a bash script and docker compose.
 
-### Install and Run
-#### Using Docker/Docker-Compose
+### Install
 
-Prerequisites: docker and docker-compose 3.8+
+Prerequisites:
+- docker and docker-compose must be installed
 
-Run `docker compose --file docker-compose.base.yml --file docker-compose.dev.yml up`
+Run `./biostask.sh install` an follow the instructions.
 
-#### Manually
 
-Prerequisites: a GNU/Linux Operating System, postgresql 14+, node 14+, python 3.12
+### Start
 
-To install and run both front and back end, run the following commands:
+Run `./biostask.sh start` an follow the instructions.
 
-```
-./install.sh
-./run.sh
-```
-
-### Launch
-
-Then, browse [127.0.0.1:3000](http://127.0.0.1:3000) to open the app.
-Or browse [127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to access backend documentation.
-
-The front and back end are located in [`./frontend`](./frontend) and [`./backend`](./backend) folders respectively.
-For more information, read [backend's readme](./backend/README.md) and [frontend's readme](./frontend/README.md).
 
 ## Road Map
 
@@ -48,6 +35,8 @@ For more information, read [backend's readme](./backend/README.md) and [frontend
 - [ ] Permissions: add a user table and credentials on the API
 - [ ] Use multipart/form-data to upload a sample (name, type,..., and file! )
 - [ ] Allow to upload file using third party services (S3, google drive, etc)
+- [x] Deploy on a VPS
+- [ ] Allow http only (for dev purposes) in addition to https
 
 ### Frontend
 - [x] Implement file upload on the UI

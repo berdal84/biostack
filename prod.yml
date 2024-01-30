@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+
+  # This file must be used in addition to docker-compose.base.yml
+  # ex:
+  #     docker compose --file docker-compose.base.yml --file docker-compose.dev.yml up
+ 
+  reverse-proxy:
+    ports:
+      - 80:80
+      - 443:443
