@@ -9,6 +9,8 @@
 This project is a client/server to manage Biotech Data. It is implemented using FastAPI and NextJS, with a Postgres database.
 Code is written in Python and TypeScript.
 
+This project is deployed at [https://biostack.42borgata.com/](https://biostack.42borgata.com/)
+
 _Note: this project is an exercise_
 
 ## Quick Start
@@ -36,14 +38,17 @@ Run `./biostask.sh start` and follow the instructions.
 - [ ] Use multipart/form-data to upload a sample (name, type,..., and file! )
 - [ ] Allow to upload file using third party services (S3, google drive, etc)
 - [x] Deploy on a VPS
-- [ ] Allow http only (for dev purposes) in addition to https
+- [x] Allow http only (for dev purposes) in addition to https
 
 ### Frontend
 - [x] Implement file upload on the UI
 - [x] Highlight items in the light, so user can understand they are clickable.
 - [ ] Add small icon-buttons to edit/delete/view a sample (only visible when row is hovered)
+- [ ] Improve feedback when user create/edit.
+- [ ] Allow to add a file during creation.
 
 ### Backend
 - [x] Add postres and fastapi to the existing docker-compose.yml
 - [x] Use Github Actions's services to run pytest with postgres
+- [x] Limit upload to 1MB
 - [ ] Setup Alembic to handle DB upgrades
