@@ -80,8 +80,9 @@ else
         echo ""
         echo "You have now to setup the ssl certificates in order to have a secured webserver."
         echo "Be sure this server has port 80 available, and run 'sudo certbot certonly'"
-        echo "Follow the instructions, and then copy the generated certificate to ./reverse-proxy/ssl.crt"
-        echo "and the key to ./reverse-proxy/ssl.key"
+        echo "During the execution or cerbot, the program will ask you for a domain, enter biostack.42borgata.com if you own this domain."
+        echo "Otherwize, enter a domain you own that is redirecting to this server. But be sure to update ./reverse-proxy/conf/prod.conf"
+        echo "by updating replacing the domain biostack.42borgata.com by yours."
         echo ""
         echo "Once done, BioStack is ready to start."
       fi
