@@ -61,7 +61,7 @@ services:
     image: nginx
     restart: always
     volumes:
-      - ./reverse-proxy/index.html:/etc/nginx/html/index.html:ro
+      - ./reverse-proxy/html:/etc/nginx/html:ro
     depends_on:
       - api
       - frontend
