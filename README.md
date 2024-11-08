@@ -9,8 +9,6 @@
 This project is a client/server to manage Biotech Data. It is implemented using FastAPI and NextJS, with a Postgres database.
 Code is written in Python and TypeScript.
 
-This project is deployed at [https://biostack.42borgata.com/](https://biostack.42borgata.com/)
-
 _Note: this project is an exercise_
 
 ## Quick Start
